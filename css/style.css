@@ -1,0 +1,734 @@
+* {
+    /* margin: 0; */
+    padding: 0;
+    box-sizing: border-box; /* Esto asegura que el padding y margin no afecten el tamaño de los elementos */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #4C4265;
+    /* text-align: center; */
+}
+body {
+    padding-top: 80px; /* Ajusta este valor según la altura de tu menú */
+}
+
+header {
+    height: 50vh;
+    margin-bottom: 20rem;
+}
+
+
+.main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #515272;
+    height: 80px; /* Añade altura fija */
+}
+
+span {
+    font-size: 32px;
+    font-family: "Lato", sans-serif;
+    font-weight: 100;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+span svg {
+    width: 80px;
+    height: 80px;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    /* padding: 1.5rem; */
+    list-style: none;
+}
+nav ul li{
+    display: flex;
+    align-items: center;
+}
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    padding: 15px 15px;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background-color: #ffffff74;
+    color: #515272;
+}
+
+swiper-container {
+    width: 100%;
+    height: 90vh;
+    /* margin-bottom: 30rem; */
+}
+
+swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Modal */
+/* Estilos básicos para el modal */
+h2 {
+    display: block;
+    font-size: 1.5em;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 100;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    unicode-bidi: isolate;
+}
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  #openModalBtn {
+    margin: 20px;
+  }
+  .modal {
+    display: none; /* El modal está oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que el modal esté al frente */
+  }
+  
+  .modal-content {
+    background-color: #000000;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    z-index: 10000; /* Asegura que el contenido del modal esté al frente */
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .modal-option {
+    display: block;
+    background-color: #4C4265;
+    color: white;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .modal-option:hover {
+    background-color: #515272;
+    ;
+  }
+
+/* Contenedor principal para el contenido */
+.layout {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* Asegura que la imagen cubra el área del contenedor */
+    object-position: center;  /* Centra la imagen */
+}
+
+.col {
+
+    width: 200px;
+    height: 300px;
+    /* background-size: cover;
+    background-position: center; */
+    border: 1px solid white;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+.col:hover{
+    
+        transform: scale(1.1); /* Hace que el div crezca un 10% */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Agrega una sombra para dar el efecto de profundidad */
+      
+}
+/* .container{
+    margin-bottom: 25rem;
+} */
+
+
+.carousel-container {
+    width: 95%;
+    max-width: 1600px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    padding: 0 0 40px;
+}
+.carousel-title {
+    color: #e5e5e5;
+    font-family: "Lato", sans-serif;
+    font-size: 2vw;
+    font-weight: 500;
+    margin-bottom: 15px;
+    padding-left: 60px;
+}
+.carousel-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: max-content;
+    padding: 0 60px;
+}
+.carousel .col {
+    width: 16vw;
+    min-width: 200px;
+    height: 9vw;
+    min-height: 112px;
+    background-size: cover;
+    background-position: center;
+    margin-right: 10px;
+    border-radius: 4px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.carousel .col:hover {
+    transform: scale(1.2);
+    z-index: 10;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+.carousel .col::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 30%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.carousel .col:hover::after {
+    opacity: 1;
+}
+.buttons {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+.buttons button {
+    background: rgba(20, 20, 20, 0.7);
+    color: white;
+    border: none;
+    padding: 15px 10px;
+    font-size: 2.5vw;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4vw;
+    height: 9vw;
+    min-height: 112px;
+    opacity: 0;
+}
+.buttons button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+.carousel-container:hover .buttons button {
+    opacity: 1;
+}
+#prev {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+#next {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+
+
+/* Efecto de sombra en los bordes */
+.carousel-wrapper::before,
+.carousel-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    z-index: 1;
+    pointer-events: none;
+}
+.carousel-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, #141414 0%, transparent 100%);
+}
+.carousel-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, #141414 0%, transparent 100%);
+}
+
+/* Estilos del menú hamburguesa */
+.hamburger-menu {
+    display: none;
+    cursor: pointer;
+    z-index: 1100;
+    position: relative;
+}
+
+.hamburger-icon {
+    width: 30px;
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger-icon span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* Estilos cuando el menú está activo */
+.hamburger-menu.active .hamburger-icon span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger-menu.active .hamburger-icon span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-icon span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Media queries para mostrar/ocultar menú hamburguesa */
+@media (max-width: 770px) {
+    .hamburger-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+    
+    nav ul {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background-color: #515272;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        transition: right 0.3s ease;
+        z-index: 1000;
+        padding-top: 80px;
+    }
+    
+    nav ul.active {
+        right: 0;
+    }
+    
+    .main {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    nav ul {
+        width: 100%;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+        nav ul {
+            flex-direction: column;
+            gap: 10px;
+            /* Elimina cualquier posición absoluta/fija que pueda tener */
+            position: static;
+        }
+        
+        /* Asegúrate que el nav no esté oculto en versiones móviles */
+        nav {
+            display: block;
+        }
+
+    .carousel-title {
+        font-size: 16px;
+        padding-left: 20px;
+    }
+    .carousel {
+        padding: 0 20px;
+    }
+    .carousel .col {
+        width: 150px;
+        height: 85px;
+    }
+    .buttons button {
+        width: 30px;
+        height: 85px;
+        font-size: 20px;
+    }
+    .carousel-wrapper::before,
+    .carousel-wrapper::after {
+        width: 20px;
+    }
+}
+
+.content {
+    margin: 0 auto;
+    margin-bottom: 2rem; 
+    width: 90%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* gap: 0.5rem; */
+    
+}
+
+/* Media Queries para hacer todo responsivo */
+
+/* Para pantallas de más de 1024px (escritorios grandes) */
+@media (max-width: 1024px) {
+    .main {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav ul li a {
+        display: block;
+        width: 100%;
+    }
+
+    .swiper-container {
+        height: 30vh;
+    }
+
+    .content {
+        grid-template-columns: repeat(4, 1fr); /* Reducir columnas en pantallas medianas */
+    }
+
+    .container {
+        margin-top: 5rem;
+    }
+}
+
+/* Para pantallas de menos de 768px (tabletas y móviles grandes) */
+@media (max-width: 768px) {
+    .main {
+        padding: 0 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav ul li a {
+        display: block;
+        width: 100%;
+        text-align: center; /* Asegurar que los enlaces estén centrados */
+    }
+
+    .swiper-container {
+        height: 30vh;
+    }
+
+    .content {
+        grid-template-columns: repeat(2, 1fr); /* Menos columnas en pantallas pequeñas */
+    }
+
+    .container {
+        margin-top: 5rem;
+    }
+
+    .col {
+        width: 100%; /* Las columnas ocupan el 100% del ancho en pantallas pequeñas */
+    }
+}
+
+/* Para pantallas de menos de 480px (móviles pequeños) */
+@media (max-width: 480px) {
+    .main {
+        padding: 0 15px;
+    }
+
+    .content {
+        grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
+    }
+
+    .swiper-container {
+        height: 25vh; /* Reducir aún más la altura del swiper en pantallas muy pequeñas */
+    }
+
+    nav ul li a {
+        padding: 10px 0; /* Reducir el padding de los enlaces en pantallas pequeñas */
+    }
+
+    span {
+        font-size: 24px; /* Reducir el tamaño de la fuente en pantallas pequeñas */
+    }
+
+    .container {
+        margin-top: 3rem; /* Reducir el margen superior */
+    }
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+    nav{
+        display: inline;
+    }
+    .main {
+        flex-direction: column; /* Colocar los elementos en columna */
+        padding: 0 10px; /* Ajuste del padding */
+    }
+    /* nav ul {
+        flex-direction: column; Cambiar los elementos del menú a columna
+        gap: 10px;
+    }
+    nav ul li a {
+        text-align: center; Centrar los enlaces
+        padding: 10px 0; Reducir el padding de los enlaces
+    } */
+    .swiper-container {
+        height: 25vh; /* Reducir altura del swiper */
+    }
+    .content {
+        grid-template-columns: 1fr; /* Una sola columna para las imágenes */
+    }
+    .carousel-title {
+        font-size: 16px; /* Reducir el tamaño de la fuente */
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    nav{
+        display: inline;
+    }
+    .main {
+        flex-direction: column; /* Cambiar la dirección del flex */
+        padding: 0 20px; /* Ajustar el padding */
+    }
+    /* nav ul {
+        flex-direction: column; Los elementos del menú en columna
+        gap: 10px;
+    }
+    nav ul li a {
+        text-align: center; Centrar los enlaces
+        width: 100%; Hacer que los enlaces ocupen todo el ancho
+    } */
+    .swiper-container {
+        height: 30vh; /* Ajustar la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(2, 1fr); /* Reducir columnas */
+    }
+    .carousel-title {
+        font-size: 18px; /* Ajustar el tamaño de la fuente */
+    }
+}
+@media (min-width: 340px) and (max-width: 771px) {
+    .main {
+        flex-direction: row; 
+        padding: 0 20px;
+    }
+    nav ul {
+        /* flex-direction: row; Los elementos del menú en fila */
+        gap: 20px;
+    }
+    nav ul li a {
+        text-align: center;
+        padding: 15px 20px; /* Ajustar el padding */
+    }
+    .swiper-container {
+        height: 40vh; /* Ajustar la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(3, 1fr); /* Tres columnas en laptops */
+    }
+    .carousel-title {
+        font-size: 20px;
+        padding-left: 40px;
+    }
+}
+/* Media queries específicas para 320px-771px */
+@media (max-width: 771px) and (min-width: 320px) {
+    .hamburger-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    nav {
+        position: fixed;
+        top: -100vh;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #515272;
+        transition: top 0.3s ease;
+        z-index: 1000;
+    }
+    
+    nav.active {
+        top: 80px; /* Ajusta según la altura de tu header */
+    }
+    
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 20px;
+        height: calc(100vh - 80px);
+        overflow-y: auto;
+        background-color: #4C4265;
+    }
+    
+    nav ul li {
+        margin: 15px 0;
+    }
+}
+
+@media (min-width: 772px) and (max-width: 1023px) {
+    .main {
+        flex-direction: row; 
+        padding: 0 20px;
+    }
+    nav ul {
+        flex-direction: row; 
+        /* Los elementos del menú en fila */
+        gap: 20px;
+    }
+    nav ul li a {
+        text-align: center;
+        padding: 15px 20px; /* Ajustar el padding */
+    }
+    .swiper-container {
+        height: 40vh; /* Ajustar la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(3, 1fr); /* Tres columnas en laptops */
+    }
+    .carousel-title {
+        font-size: 20px;
+        padding-left: 40px;
+    }
+}
+@media (min-width: 1024px) and (max-width: 1200px) {
+    .main {
+        flex-direction: row; /* Disposición en fila */
+        padding: 0 30px;
+    }
+    nav ul {
+        flex-direction: row;
+        gap: 30px;
+    }
+    nav ul li a {
+        padding: 15px 25px; /* Ajuste de padding */
+    }
+    .swiper-container {
+        height: 50vh; /* Aumentar la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(4, 1fr); /* Cuatro columnas */
+    }
+    .carousel-title {
+        font-size: 24px;
+        padding-left: 60px;
+    }
+}
+@media (min-width: 1201px) {
+    .main {
+        flex-direction: row;
+        padding: 0 50px; /* Más padding en pantallas grandes */
+    }
+    nav ul {
+        flex-direction: row;
+        gap: 40px; /* Mayor espacio entre los elementos del menú */
+    }
+    nav ul li a {
+        padding: 20px 30px; /* Aumentar padding en pantallas grandes */
+    }
+    .swiper-container {
+        height: 60vh; /* Ajustar la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(5, 1fr); /* Cinco columnas para pantallas grandes */
+    }
+    .carousel-title {
+        font-size: 28px; /* Aumentar tamaño de fuente */
+    }
+}
+@media (min-width: 1920px) {
+    .main {
+        padding: 0 60px; /* Aumentar el padding en pantallas muy grandes */
+    }
+    nav ul {
+        gap: 50px; /* Aumentar el espacio entre los elementos del menú */
+    }
+    .swiper-container {
+        height: 70vh; /* Aumentar aún más la altura del swiper */
+    }
+    .content {
+        grid-template-columns: repeat(6, 1fr); /* Seis columnas para pantallas grandes */
+    }
+    .carousel-title {
+        font-size: 30px; /* Ajustar tamaño de la fuente */
+    }
+}
+

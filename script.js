@@ -1,101 +1,268 @@
-window.onload = function() {
-    function series() {
-        let content_s = document.getElementById('conte');
-        if (!content_s) {
-            console.error("El contenedor #conte no existe.");
-            return;
-        }
-        
-        let imageUrls = [
-            'https://hips.hearstapps.com/hmg-prod/images/casa-papel-poster-fotogramas-1637170621.jpg?resize=980:*',
-            'https://i.pinimg.com/474x/82/a5/28/82a5285dae1c0689395182a9eb593c10.jpg',
-            'https://stylelovely.com/wp-content/uploads/2020/10/series-de-netflix-que-triunfan-Alguien_tiene_que_morir_Miniserie_de_TV.jpg',
-            'https://i.pinimg.com/736x/aa/5c/f7/aa5cf753386ce4a702118209e8d0c75d.jpg',
-            'https://www.drcommodore.it/wp-content/uploads/2020/12/lupin-vert.jpg',
-            'https://i.ebayimg.com/images/g/Ym8AAOSw5H9jRT3d/s-l1200.jpg'
-        ];
-        
-        imageUrls.forEach(url => {
-            let divSerie = document.createElement('div');
-            divSerie.classList.add('col');
-            divSerie.style.backgroundImage = `url(${url})`;
-            content_s.appendChild(divSerie);
-        });
+// Definir la clase Favorito con un constructor que reciba 'nombre' e 'img'
+class Favorito {
+    constructor(nombre, img) {
+        this.nombre = nombre;
+        this.img = img;
+    }
+}
 
-        // Asegurarse que los elementos están cargados
-        setTimeout(() => {
-            initCarousel();
-        }, 100);
+// Crear un array para almacenar los favoritos
+let listaFavoritos = [];
+
+// Obtener el modal y los botones
+const modal = document.getElementById('modal');
+const openModalBtn = document.getElementById('openModalBtn');
+const closeBtn = document.getElementById('closeBtn');
+const playBtn = document.getElementById('playBtn');
+const favoritesBtn = document.getElementById('favoritesBtn');
+const hideBtn = document.getElementById('hideBtn');
+
+// Cerrar el modal cuando se haga clic en la "X"
+closeBtn.onclick = function() {
+    modal.style.display = 'none';
+}
+
+// Función para cargar datos y configurar el carrusel
+function loadCarouselData(jsonUrl, containerId, prevBtnId, nextBtnId, dataKey, favContainerId) {
+    let content = document.getElementById(containerId);
+    if (!content) {
+        console.error(`El contenedor ${containerId} no existe.`);
+        return;
     }
 
-    function initCarousel() {
-        let index = 0;
-        const carousel = document.querySelector('.carousel');
-        const items = document.querySelectorAll('.col');
-        
-        if (!carousel || items.length === 0) {
-            console.error("Elementos del carrusel no encontrados");
-            return;
-        }
+    // Limpiar el contenedor antes de agregar nuevos elementos
+    content.innerHTML = '';
 
-        const itemWidth = items[0].offsetWidth;
-        const step = itemWidth + 10;
-        const maxIndex = items.length - 1;
+    // Cargar el archivo JSON
+    fetch(jsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Extraer las películas o series del JSON dependiendo del dataKey (peliculas o series)
+            let items = data.hub_entretenimiento[dataKey];
 
-        function updateCarousel() {
-            carousel.style.transform = `translateX(-${index * step}px)`;
-            
-            // Actualizar estado de los botones
-            const prevBtn = document.getElementById('prev');
-            const nextBtn = document.getElementById('next');
-            
-            if (prevBtn) prevBtn.disabled = index <= 0;
-            if (nextBtn) nextBtn.disabled = index >= maxIndex;
-        }
+            // Verificar que se han encontrado elementos
+            if (!items || items.length === 0) {
+                console.error("No se encontraron elementos en el archivo JSON.");
+                return;
+            }
 
-        // Configurar eventos
-        const nextBtn = document.getElementById('next');
-        const prevBtn = document.getElementById('prev');
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                if (index < maxIndex) {
-                    index++;
-                    updateCarousel();
-                }
+            // Recorrer los elementos y agregarlos al contenedor
+            items.forEach(item => {
+                let divItem = document.createElement('div');
+                divItem.classList.add('col');
+
+                // Crear una etiqueta <img> y asignar los atributos
+                let img = document.createElement('img');
+                img.src = item.img; // Asumimos que 'img' es el campo con la URL de la imagen
+                img.alt = item.nombre; // Asumimos que 'nombre' es el campo con el nombre de la película o serie
+                
+                // Agregar la clase 'layout' a la imagen
+                img.classList.add('layout');
+
+                // Asignar un evento de clic al contenedor del divItem
+                divItem.addEventListener('click', () => {
+                    let titulo = document.getElementById('h2Opciones');
+                    
+                    // Cambiar el texto del <h1>
+                    titulo.innerText = `Opciones para ${item.nombre}`;
+                    modal.style.display = 'flex';  // Modal abierto
+                    // Al hacer clic, mostrará las opciones para ocultar, agregar a favoritos o reproducir
+                    let currentItem = item; // Guardar el item actual
+
+                    // Lógica de los botones dentro del modal
+                    hideBtn.onclick = function() {
+                        divItem.style.display = 'none'; // Ocultar el item
+                        modal.style.display = 'none';  // Cerrar el modal
+                        alert(`${currentItem.nombre} ha sido oculto.`);
+                    }
+
+                    favoritesBtn.onclick = function() {
+                        // Crear un nuevo objeto Favorito y agregarlo a la lista
+                        let nuevoFavorito = new Favorito(currentItem.nombre, currentItem.img);
+                        listaFavoritos.push(nuevoFavorito);
+                        alert(`${currentItem.nombre} añadido a favoritos!`);
+                        updateFavoritos(favContainerId); // Actualizar el carrusel de favoritos
+                        modal.style.display = 'none';  // Cerrar el modal
+                    }
+
+                    playBtn.onclick = function() {
+                        alert(`Reproduciendo ${currentItem.nombre}...`);
+                        modal.style.display = 'none';  // Cerrar el modal
+                    }
+                });
+
+                // Agregar la imagen al divItem
+                divItem.appendChild(img);
+
+                // Agregar el divItem al contenedor del carrusel
+                content.appendChild(divItem);
             });
-        }
-        
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                if (index > 0) {
-                    index--;
-                    updateCarousel();
-                }
-            });
-        }
 
-        // Teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' && index < maxIndex) {
+            // Asegurarse de que los elementos estén cargados y el carrusel se inicie
+            setTimeout(() => {
+                initCarousel(containerId, prevBtnId, nextBtnId);  // Inicializamos el carrusel
+            }, 100);
+        })
+        .catch(error => {
+            console.error('Error al cargar el archivo JSON:', error);
+        });
+}
+
+// Función para inicializar el carrusel
+function initCarousel(containerId, prevBtnId, nextBtnId) {
+    let index = 0;
+    const carousel = document.getElementById(containerId);
+    const items = carousel.querySelectorAll('.col');
+
+    if (!carousel || items.length === 0) {
+        console.error("Elementos del carrusel no encontrados");
+        return;
+    }
+
+    const itemWidth = items[0].offsetWidth;
+    let step = itemWidth + 10;
+    const maxIndex = items.length - 1;
+
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${index * step}px)`;
+
+        // Actualizar estado de los botones
+        const prevBtn = document.getElementById(prevBtnId);
+        const nextBtn = document.getElementById(nextBtnId);
+
+        if (prevBtn) prevBtn.disabled = index <= 0;
+        if (nextBtn) nextBtn.disabled = index >= maxIndex;
+    }
+
+    // Configurar eventos para los botones
+    const nextBtn = document.getElementById(nextBtnId);
+    const prevBtn = document.getElementById(prevBtnId);
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (index < maxIndex) {
                 index++;
                 updateCarousel();
-            } else if (e.key === 'ArrowLeft' && index > 0) {
+            }
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) {
                 index--;
                 updateCarousel();
             }
         });
-
-        // Redimensionamiento
-        window.addEventListener('resize', () => {
-            const newItemWidth = items[0].offsetWidth;
-            const newStep = newItemWidth + 10;
-            step = newStep;
-            updateCarousel();
-        });
-
-        updateCarousel();
     }
 
-    series();
-};
+    // Redimensionamiento
+    window.addEventListener('resize', () => {
+        const newItemWidth = items[0].offsetWidth;
+        step = newItemWidth + 10;
+        updateCarousel();
+    });
+
+    updateCarousel();
+}
+
+// Función para actualizar el carrusel de favoritos
+function updateFavoritos(favContainerId) {
+    let favContent = document.getElementById(favContainerId);
+    if (!favContent) {
+        console.error(`El contenedor ${favContainerId} no existe.`);
+        return;
+    }
+
+    // Limpiar el contenedor de favoritos antes de agregar los nuevos elementos
+    favContent.innerHTML = '';
+
+    // Si no hay favoritos, ocultar el carrusel
+    if (listaFavoritos.length === 0) {
+        document.getElementById('favoritos-carousel').style.display = 'none';
+    } else {
+        document.getElementById('favoritos-carousel').style.display = 'block';
+        
+        // Recorrer los favoritos y agregarlos al contenedor
+        listaFavoritos.forEach(fav => {
+            let divItem = document.createElement('div');
+            divItem.classList.add('col');
+
+            // Crear una etiqueta <img> y asignar los atributos
+            let img = document.createElement('img');
+            img.src = fav.img; // La imagen del favorito
+            img.alt = fav.nombre; // El nombre del favorito
+
+            // Agregar la clase 'layout' a la imagen
+            img.classList.add('layout');
+
+            // Agregar la imagen al divItem
+            divItem.appendChild(img);
+
+            // Agregar el divItem al contenedor del carrusel de favoritos
+            favContent.appendChild(divItem);
+        });
+
+        // Inicializar el carrusel de favoritos
+        setTimeout(() => {
+            initCarousel(favContainerId, 'prev-favoritos', 'next-favoritos');
+        }, 100);
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleccionar elementos con selectores más específicos
+    const hamburgerBtn = document.querySelector('.hamburger-menu');
+    const mainNav = document.querySelector('nav');
+    const navList = document.querySelector('nav ul');
+    const navLinks = document.querySelectorAll('nav ul li a');
+    
+    // Función para alternar el menú
+    function toggleMenu() {
+        hamburgerBtn.classList.toggle('active');
+        mainNav.classList.toggle('active');
+        navList.classList.toggle('active');
+        
+        // Bloquear scroll de manera más confiable
+        if (hamburgerBtn.classList.contains('active')) {
+            document.body.classList.add('menu-open');
+        } else {
+            document.body.classList.remove('menu-open');
+        }
+    }
+    
+    // Evento del botón hamburguesa
+    hamburgerBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Evita que el evento se propague
+        toggleMenu();
+    });
+    
+    // Cerrar menú al hacer clic en enlaces
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 771) {
+                toggleMenu();
+            }
+        });
+    });
+    
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 771 && 
+            !e.target.closest('nav') && 
+            !e.target.closest('.hamburger-menu') &&
+            hamburgerBtn.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+    
+    // Cerrar menú al redimensionar
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 771 && hamburgerBtn.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+});
+
+// Llamamos a la función para cargar las películas y series y configurar los carruseles
+loadCarouselData('komodoTV.json', 'conte-peliculas', 'prev-peliculas', 'next-peliculas', 'peliculas', 'conte-favoritos');  // Para Peliculas
+loadCarouselData('komodoTV.json', 'conte-series', 'prev-series', 'next-series', 'series', 'conte-favoritos');  // Para Series
