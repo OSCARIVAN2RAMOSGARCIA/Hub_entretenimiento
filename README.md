@@ -30,7 +30,7 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 ## Retrospectiva
   
    1. ¿Qué hice bien?  
-   - Logre manipular eficazmente los elementos de html con javascript, ademas implementar los conocimientos impartidos en el curso de udemy y las clases impartidas, tales como hacer el responsive, reutilizar codigo, desarrolle un programa em Python para convertir imagenes de diferentes formatos a webp   
+   - Logre manipular eficazmente los elementos de html con javascript, ademas implementar los conocimientos impartidos en el curso de udemy y las clases impartidas, tales como hacer el responsive, reutilizar codigo, desarrolle un programa em Python para convertir imagenes de diferentes formatos a webp, ademas tambien practique los fundamentos de json y de clases    
 
     https://github.com/OSCARIVAN2RAMOSGARCIA/convertidorIMG.git
 
