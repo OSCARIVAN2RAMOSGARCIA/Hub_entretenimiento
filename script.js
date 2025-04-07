@@ -1,15 +1,15 @@
-// Definir la clase Favorito con un constructor que reciba 'nombre' e 'img'
+// Definir la clase Favorito con un constructor que recibe 'nombre' e 'img'
 class Favorito {
     constructor(nombre, img) {
-        this.nombre = nombre;
-        this.img = img;
+        this.nombre = nombre;  // Guardamos el nombre del favorito
+        this.img = img;        // Guardamos la URL de la imagen del favorito
     }
 }
 
 // Crear un array para almacenar los favoritos
-let listaFavoritos = [];
+let listaFavoritos = [];  // Lista vacía donde se guardarán los objetos Favorito
 
-// Obtener el modal y los botones
+// Obtener el modal y los botones de la interfaz
 const modal = document.getElementById('modal');
 const openModalBtn = document.getElementById('openModalBtn');
 const closeBtn = document.getElementById('closeBtn');
@@ -19,13 +19,13 @@ const hideBtn = document.getElementById('hideBtn');
 
 // Cerrar el modal cuando se haga clic en la "X"
 closeBtn.onclick = function() {
-    modal.style.display = 'none';
+    modal.style.display = 'none';  // Cerramos el modal
 }
 
-// Función para cargar datos y configurar el carrusel
+// Función para cargar los datos y configurar el carrusel
 function loadCarouselData(jsonUrl, containerId, prevBtnId, nextBtnId, dataKey, favContainerId) {
-    let content = document.getElementById(containerId);
-    if (!content) {
+    let content = document.getElementById(containerId);  // Seleccionamos el contenedor del carrusel
+    if (!content) {  // Si el contenedor no existe, mostramos un error
         console.error(`El contenedor ${containerId} no existe.`);
         return;
     }
@@ -33,72 +33,73 @@ function loadCarouselData(jsonUrl, containerId, prevBtnId, nextBtnId, dataKey, f
     // Limpiar el contenedor antes de agregar nuevos elementos
     content.innerHTML = '';
 
-    // Cargar el archivo JSON
+    // Cargar el archivo JSON con las películas o series
     fetch(jsonUrl)
-        .then(response => response.json())
+        .then(response => response.json())  // Parseamos la respuesta como JSON
         .then(data => {
-            // Extraer las películas o series del JSON dependiendo del dataKey (peliculas o series)
+            // Extraemos las películas o series del archivo JSON
             let items = data.hub_entretenimiento[dataKey];
 
-            // Verificar que se han encontrado elementos
+            // Si no hay elementos, mostramos un error
             if (!items || items.length === 0) {
                 console.error("No se encontraron elementos en el archivo JSON.");
                 return;
             }
 
-            // Recorrer los elementos y agregarlos al contenedor
+            // Iteramos sobre los elementos (películas o series)
             items.forEach(item => {
                 let divItem = document.createElement('div');
-                divItem.classList.add('col');
+                divItem.classList.add('col');  // Le agregamos la clase 'col' al div
 
-                // Crear una etiqueta <img> y asignar los atributos
+                // Creamos la etiqueta <img> y le asignamos los atributos
                 let img = document.createElement('img');
-                img.src = item.img; // Asumimos que 'img' es el campo con la URL de la imagen
-                img.alt = item.nombre; // Asumimos que 'nombre' es el campo con el nombre de la película o serie
-                
-                // Agregar la clase 'layout' a la imagen
+                img.src = item.img;  // Asignamos la URL de la imagen
+                img.alt = item.nombre;  // Asignamos el nombre como texto alternativo
+
+                // Agregamos la clase 'layout' a la imagen
                 img.classList.add('layout');
 
-                // Asignar un evento de clic al contenedor del divItem
+                // Añadimos un evento de clic al divItem
                 divItem.addEventListener('click', () => {
                     let titulo = document.getElementById('h2Opciones');
                     
-                    // Cambiar el texto del <h1>
+                    // Cambiamos el texto de <h2> para mostrar el nombre del item seleccionado
                     titulo.innerText = `Opciones para ${item.nombre}`;
-                    modal.style.display = 'flex';  // Modal abierto
-                    // Al hacer clic, mostrará las opciones para ocultar, agregar a favoritos o reproducir
-                    let currentItem = item; // Guardar el item actual
+                    modal.style.display = 'flex';  // Mostramos el modal
 
-                    // Lógica de los botones dentro del modal
+                    let currentItem = item;  // Guardamos el item actual para usarlo en los botones
+
+                    // Función para ocultar el item del carrusel
                     hideBtn.onclick = function() {
-                        divItem.style.display = 'none'; // Ocultar el item
-                        modal.style.display = 'none';  // Cerrar el modal
+                        divItem.style.display = 'none';  // Ocultamos el div del carrusel
+                        modal.style.display = 'none';  // Cerramos el modal
                         alert(`${currentItem.nombre} ha sido oculto.`);
                     }
 
+                    // Función para agregar a favoritos
                     favoritesBtn.onclick = function() {
-                        // Crear un nuevo objeto Favorito y agregarlo a la lista
-                        let nuevoFavorito = new Favorito(currentItem.nombre, currentItem.img);
-                        listaFavoritos.push(nuevoFavorito);
+                        let nuevoFavorito = new Favorito(currentItem.nombre, currentItem.img);  // Creamos un nuevo Favorito
+                        listaFavoritos.push(nuevoFavorito);  // Lo agregamos a la lista de favoritos
                         alert(`${currentItem.nombre} añadido a favoritos!`);
-                        updateFavoritos(favContainerId); // Actualizar el carrusel de favoritos
-                        modal.style.display = 'none';  // Cerrar el modal
+                        updateFavoritos(favContainerId);  // Actualizamos el carrusel de favoritos
+                        modal.style.display = 'none';  // Cerramos el modal
                     }
 
+                    // Función para reproducir el item seleccionado
                     playBtn.onclick = function() {
                         alert(`Reproduciendo ${currentItem.nombre}...`);
-                        modal.style.display = 'none';  // Cerrar el modal
+                        modal.style.display = 'none';  // Cerramos el modal
                     }
                 });
 
-                // Agregar la imagen al divItem
+                // Agregamos la imagen al divItem
                 divItem.appendChild(img);
 
-                // Agregar el divItem al contenedor del carrusel
+                // Agregamos el divItem al contenedor del carrusel
                 content.appendChild(divItem);
             });
 
-            // Asegurarse de que los elementos estén cargados y el carrusel se inicie
+            // Aseguramos que los elementos estén cargados antes de inicializar el carrusel
             setTimeout(() => {
                 initCarousel(containerId, prevBtnId, nextBtnId);  // Inicializamos el carrusel
             }, 100);
@@ -108,39 +109,40 @@ function loadCarouselData(jsonUrl, containerId, prevBtnId, nextBtnId, dataKey, f
         });
 }
 
-// Función para inicializar el carrusel
+// Función para inicializar el carrusel (para el desplazamiento)
 function initCarousel(containerId, prevBtnId, nextBtnId) {
     let index = 0;
-    const carousel = document.getElementById(containerId);
-    const items = carousel.querySelectorAll('.col');
+    const carousel = document.getElementById(containerId);  // Obtenemos el contenedor del carrusel
+    const items = carousel.querySelectorAll('.col');  // Obtenemos todos los elementos del carrusel
 
-    if (!carousel || items.length === 0) {
+    if (!carousel || items.length === 0) {  // Si no hay elementos, mostramos un error
         console.error("Elementos del carrusel no encontrados");
         return;
     }
 
-    const itemWidth = items[0].offsetWidth;
-    let step = itemWidth + 10;
-    const maxIndex = items.length - 1;
+    const itemWidth = items[0].offsetWidth;  // Ancho de los elementos
+    let step = itemWidth + 10;  // Definimos el paso de desplazamiento
+    const maxIndex = items.length - 1;  // Índice máximo del carrusel
 
+    // Función para actualizar la posición del carrusel
     function updateCarousel() {
-        carousel.style.transform = `translateX(-${index * step}px)`;
+        carousel.style.transform = `translateX(-${index * step}px)`;  // Movemos el carrusel
 
-        // Actualizar estado de los botones
+        // Actualizamos el estado de los botones (habilitar/deshabilitar)
         const prevBtn = document.getElementById(prevBtnId);
         const nextBtn = document.getElementById(nextBtnId);
 
-        if (prevBtn) prevBtn.disabled = index <= 0;
-        if (nextBtn) nextBtn.disabled = index >= maxIndex;
+        if (prevBtn) prevBtn.disabled = index <= 0;  // Deshabilitar el botón anterior si estamos en el inicio
+        if (nextBtn) nextBtn.disabled = index >= maxIndex;  // Deshabilitar el botón siguiente si estamos al final
     }
 
-    // Configurar eventos para los botones
+    // Configuramos los eventos para los botones de navegación
     const nextBtn = document.getElementById(nextBtnId);
     const prevBtn = document.getElementById(prevBtnId);
 
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
-            if (index < maxIndex) {
+            if (index < maxIndex) {  // Si no hemos llegado al final, aumentamos el índice
                 index++;
                 updateCarousel();
             }
@@ -149,35 +151,35 @@ function initCarousel(containerId, prevBtnId, nextBtnId) {
 
     if (prevBtn) {
         prevBtn.addEventListener('click', () => {
-            if (index > 0) {
+            if (index > 0) {  // Si no estamos en el inicio, disminuimos el índice
                 index--;
                 updateCarousel();
             }
         });
     }
 
-    // Redimensionamiento
+    // Redimensionamiento del carrusel en caso de cambio de tamaño de la ventana
     window.addEventListener('resize', () => {
-        const newItemWidth = items[0].offsetWidth;
-        step = newItemWidth + 10;
+        const newItemWidth = items[0].offsetWidth;  // Obtenemos el nuevo ancho
+        step = newItemWidth + 10;  // Ajustamos el paso de desplazamiento
         updateCarousel();
     });
 
-    updateCarousel();
+    updateCarousel();  // Actualizamos el carrusel al inicio
 }
 
 // Función para actualizar el carrusel de favoritos
 function updateFavoritos(favContainerId) {
-    let favContent = document.getElementById(favContainerId);
-    if (!favContent) {
+    let favContent = document.getElementById(favContainerId);  // Seleccionamos el contenedor de favoritos
+    if (!favContent) {  // Si el contenedor no existe, mostramos un error
         console.error(`El contenedor ${favContainerId} no existe.`);
         return;
     }
 
-    // Limpiar el contenedor de favoritos antes de agregar los nuevos elementos
+    // Limpiar el contenedor de favoritos antes de agregar nuevos elementos
     favContent.innerHTML = '';
 
-    // Si no hay favoritos, ocultar el carrusel
+    // Si no hay favoritos, ocultamos el carrusel de favoritos
     if (listaFavoritos.length === 0) {
         document.getElementById('favoritos-carousel').style.display = 'none';
     } else {
@@ -190,8 +192,8 @@ function updateFavoritos(favContainerId) {
 
             // Crear una etiqueta <img> y asignar los atributos
             let img = document.createElement('img');
-            img.src = fav.img; // La imagen del favorito
-            img.alt = fav.nombre; // El nombre del favorito
+            img.src = fav.img;  // Asignamos la imagen del favorito
+            img.alt = fav.nombre;  // Asignamos el nombre del favorito
 
             // Agregar la clase 'layout' a la imagen
             img.classList.add('layout');
@@ -209,43 +211,44 @@ function updateFavoritos(favContainerId) {
         }, 100);
     }
 }
+
+// Evento para cuando el DOM está completamente cargado
 document.addEventListener('DOMContentLoaded', function() {
-    // Seleccionar elementos con selectores más específicos
-    const hamburgerBtn = document.querySelector('.hamburger-menu');
-    const mainNav = document.querySelector('nav');
-    const navList = document.querySelector('nav ul');
-    const navLinks = document.querySelectorAll('nav ul li a');
+    const hamburgerBtn = document.querySelector('.hamburger-menu');  // Botón hamburguesa
+    const mainNav = document.querySelector('nav');  // Menú de navegación
+    const navList = document.querySelector('nav ul');  // Lista de enlaces en el menú
+    const navLinks = document.querySelectorAll('nav ul li a');  // Todos los enlaces en el menú
     
-    // Función para alternar el menú
+    // Función para alternar el menú de navegación
     function toggleMenu() {
         hamburgerBtn.classList.toggle('active');
         mainNav.classList.toggle('active');
         navList.classList.toggle('active');
         
-        // Bloquear scroll de manera más confiable
+        // Bloquear el scroll cuando el menú esté abierto
         if (hamburgerBtn.classList.contains('active')) {
             document.body.classList.add('menu-open');
         } else {
             document.body.classList.remove('menu-open');
         }
     }
-    
-    // Evento del botón hamburguesa
+
+    // Evento del botón hamburguesa para abrir/cerrar el menú
     hamburgerBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); // Evita que el evento se propague
+        e.stopPropagation();  // Evita que el evento se propague
         toggleMenu();
     });
-    
-    // Cerrar menú al hacer clic en enlaces
+
+    // Cerrar el menú al hacer clic en un enlace del menú
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            if (window.innerWidth <= 771) {
+            if (window.innerWidth <= 771) {  // Si la pantalla es pequeña, cerramos el menú
                 toggleMenu();
             }
         });
     });
-    
-    // Cerrar menú al hacer clic fuera
+
+    // Cerrar el menú si se hace clic fuera de él
     document.addEventListener('click', function(e) {
         if (window.innerWidth <= 771 && 
             !e.target.closest('nav') && 
@@ -254,8 +257,8 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleMenu();
         }
     });
-    
-    // Cerrar menú al redimensionar
+
+    // Cerrar el menú al redimensionar la ventana
     window.addEventListener('resize', function() {
         if (window.innerWidth > 771 && hamburgerBtn.classList.contains('active')) {
             toggleMenu();
@@ -263,6 +266,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Llamamos a la función para cargar las películas y series y configurar los carruseles
+// Función para hacer scroll a un elemento específico
+function scrollToElement(elemento) {
+    const targetElement = document.getElementById(elemento);  // Obtenemos el elemento objetivo
+    targetElement.scrollIntoView({
+        behavior: 'smooth',  // Desplazamiento suave
+        block: 'center'      // Centrar el elemento en la vista
+    });
+}
+
+// Cargar los datos de películas y series y configurar los carruseles
 loadCarouselData('komodoTV.json', 'conte-peliculas', 'prev-peliculas', 'next-peliculas', 'peliculas', 'conte-favoritos');  // Para Peliculas
 loadCarouselData('komodoTV.json', 'conte-series', 'prev-series', 'next-series', 'series', 'conte-favoritos');  // Para Series

@@ -24,21 +24,23 @@
 
             <nav>
                 <ul>
-                    <li><a href="/html/">Generos</a></li>
-                    <li><a href="/css/">Peliculas</a> </li>
-                    <li><a href="/js/">Favoritos</a> </li>
-                    <li><a href="/python/">Configuracion</a></li>
+                    <li><a onclick="scrollToElement('div-peliculas')" >Peliculas</a></li>
+                    <li><a onclick="scrollToElement('div-series')">Series</a> </li>
+                    <li><a onclick="scrollToElement('favoritos-carousel')">Favoritos</a> </li>
+                    <li><a >Configuracion</a></li>
                 </ul>
             </nav>
-                <!-- cambios -->
-        <div class="hamburger-menu">
-            <div class="hamburger-icon">
-                <span></span>
-                <span></span>
-                <span></span>
+            <!-- Menu hamburguesa -->
+            <div class="hamburger-menu">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </div>
-        </div>
+
+        <!-- carrucel principal  -->
         <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" navigation="true" space-between="30"
         centered-slides="true" autoplay-delay="4500" autoplay-disable-on-interaction="false">
             <swiper-slide><img src="Resourses/peliculas/Avatar.webp" alt="Avatar"></swiper-slide>
@@ -50,9 +52,8 @@
             <swiper-slide><img src="https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABbbXGsGNkoQW2mDm7J8XR4oWe6oMAwFB7WiFHPYT2W3srOW-KMSQKlfSrPmNEZFRFXwzvj6CECxNJhJ_GPViy3gKTHiYfGZPlTfP.jpg?r=8c8" alt="Titanes"></swiper-slide>
             <swiper-slide><img src="https://eloutput.com/wp-content/uploads/2021/01/la-casa-de-papel-22.jpg" alt="casa de papel"></swiper-slide>
         </swiper-container>
-    
-
     </header>
+    
     <!-- Modal de opciones  -->
   <div id="modal" class="modal">
     <div class="modal-content">
@@ -78,7 +79,7 @@
     </div>
         
     <!-- Carrusel de Peliculas -->
-        <div class="carousel-container">
+        <div id="div-peliculas" class="carousel-container">
             <h2 class="carousel-title">Peliculas populares</h2>
             <div class="carousel-wrapper">
                 <div class="buttons">
@@ -90,7 +91,7 @@
         </div>
     
     <!-- Carrusel de Series -->
-        <div class="carousel-container">
+        <div id="div-series" class="carousel-container">
             <h2 class="carousel-title">Series populares</h2>
             <div class="carousel-wrapper">
                 <div class="buttons">
