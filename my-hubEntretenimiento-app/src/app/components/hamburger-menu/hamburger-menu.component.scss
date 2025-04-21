@@ -1,82 +1,26 @@
-// Variables opcionales para colores
-$menu-bg: #515272;
-$menu-bg-mobile: #4C4265;
-$hamburger-color: #ffffff;
-
 .hamburger-menu {
-  display: none;
   cursor: pointer;
-  z-index: 1100;
-  position: relative;
-
-  .hamburger-icon {
-    width: 30px;
-    height: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    span {
-      display: block;
-      height: 3px;
-      width: 100%;
-      background-color: $hamburger-color;
-      transition: all 0.3s ease;
-    }
-  }
-
-  &.active {
-    .hamburger-icon {
-      span:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-      }
-      span:nth-child(2) {
-        opacity: 0;
-      }
-      span:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-      }
-    }
-  }
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1001;
 }
 
-// Responsive: activar hamburguesa en móviles
-@media (max-width: 770px) {
-  .hamburger-menu {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-  }
+.hamburger-menu div {
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
 
-  nav {
-    position: fixed;
-    top: -100vh;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: $menu-bg;
-    transition: top 0.3s ease;
-    z-index: 1000;
+.hamburger-menu.active div:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
 
-    &.active {
-      top: 80px;
-    }
+.hamburger-menu.active div:nth-child(2) {
+  opacity: 0;
+}
 
-    ul {
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding-top: 20px;
-      height: calc(100vh - 80px);
-      overflow-y: auto;
-      background-color: $menu-bg-mobile;
-      gap: 2rem;
-
-      li {
-        margin: 15px 0;
-      }
-    }
-  }
+.hamburger-menu.active div:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
 }

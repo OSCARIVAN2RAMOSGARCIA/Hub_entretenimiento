@@ -1,12 +1,11 @@
 /* Estilos globales para Swiper */
 .swiper {
   width: 100%;
-  height: 100%;
+  height: auto; /* Cambia de 100% a auto */
   margin: 0;
   padding: 0;
-  position: fixed;
-  left: 0;
-  right: 0;
+  position: relative; /* Cambia de fixed a relative */
+  /* Elimina left: 0 y right: 0 */
 }
 
 /* Ajustes para el wrapper de los slides */

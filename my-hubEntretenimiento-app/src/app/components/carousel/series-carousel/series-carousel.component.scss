@@ -1,0 +1,39 @@
+.carousel-wrapper {
+    margin: 2rem 0;
+    padding: 0 2rem;
+    overflow-x: hidden;
+  }
+  
+  .carousel-wrapper h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  
+  .carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .carousel::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .col {
+    min-width: 200px;
+    flex: 0 0 auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .col:hover {
+    transform: scale(1.05);
+  }
+  
+  .col img {
+    border-radius: 10px;
+    width: 100%;
+    height: auto;
+  }
+  
