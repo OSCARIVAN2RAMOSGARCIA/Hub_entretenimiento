@@ -1,0 +1,67 @@
+.main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #515272;
+    height: 80px;
+  
+    span {
+      font-size: 32px;
+      font-family: "Lato", sans-serif;
+      font-weight: 100;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+  
+      svg {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  
+    nav {
+      margin-left: auto; // <-- Esto empuja el nav a la derecha
+  
+      ul {
+        display: flex;
+        justify-content: flex-end;
+        gap: 30px;
+        list-style: none;
+        margin-right: 2rem;
+  
+        li {
+          display: flex;
+          align-items: center;
+  
+          a {
+            text-decoration: none;
+            font-family: "Lato", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            color: white;
+            font-size: 20px;
+            padding: 15px 15px;
+            transition: 0.3s;
+            border-radius: 5px;
+  
+            &:hover {
+              background-color: #ffffff74;
+              color: #515272;
+            }
+          }
+        }
+      }
+    }
+  
+    .hamburger-menu {
+      display: none;
+      // (resto igual)
+    }
+  }
+  
