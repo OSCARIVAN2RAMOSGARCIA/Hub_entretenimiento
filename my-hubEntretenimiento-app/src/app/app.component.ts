@@ -4,6 +4,9 @@ import { MainCarouselComponent } from './components/main-carousel/main-carousel.
 import { HeaderComponent } from './components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { MoviesCarouselComponent } from './components/carousel/movies-carousel/movies-carousel.component';
+import { SeriesCarouselComponent } from './components/carousel/series-carousel/series-carousel.component';
+import { RouterOutlet } from '@angular/router';
+import { HomeComponent } from './components/pages/home/home.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +14,7 @@ import { MoviesCarouselComponent } from './components/carousel/movies-carousel/m
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] , // Agregar este esquema si trabajas con Web Components
-  imports: [CommonModule,HeaderComponent, MainCarouselComponent,MoviesCarouselComponent] // Asegúrate de importar ambos
+  imports: [CommonModule,HeaderComponent, MainCarouselComponent,MoviesCarouselComponent,SeriesCarouselComponent,HomeComponent,RouterOutlet] // Asegúrate de importar ambos
 })
 export class AppComponent  {
 
