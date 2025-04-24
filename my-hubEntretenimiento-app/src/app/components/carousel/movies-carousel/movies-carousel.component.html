@@ -1,8 +1,56 @@
-<div class="carousel-wrapper">
-  <h2>Películas</h2>
-  <div class="carousel">
-    <div class="col" *ngFor="let movie of movies">
-      <img [src]="movie.image" [alt]="movie.title" />
+<div class="carousel-container">
+  <h2 class="carousel-title">Peliculas Populares</h2>
+  
+  <div class="carousel-wrapper">
+    <button 
+      class="nav-button prev-button" 
+      (click)="prev()" 
+      [disabled]="currentIndex === 0"
+      aria-label="Anterior"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" fill="currentColor"/>
+      </svg>
+    </button>
+
+    <div class="carousel-track">
+      <div 
+        *ngFor="let movie of movies" 
+        class="carousel-item"
+        (click)="openModal(movie)"
+      >
+        <div class="item-poster">
+          <img 
+            [src]="movie.img" 
+            [alt]="movie.nombre" 
+            class="movies-poster"
+            loading="lazy"
+          >
+          <div class="item-overlay">
+            <span class="rating-badge">
+              ⭐ {{ movie.calificacion }}
+            </span>
+            <button class="quick-action" (click)="$event.stopPropagation(); openModal(movie)">
+              ⋯
+            </button>
+          </div>
+        </div>
+        <div class="item-info">
+          <h3 class="movies-title">{{ movie.nombre }}</h3>
+          <p class="movies-duration">{{ movie.duracion }}</p>
+        </div>
+      </div>
     </div>
+
+    <button 
+      class="nav-button next-button" 
+      (click)="next()" 
+      [disabled]="currentIndex >= movies.length - visibleItems"
+      aria-label="Siguiente"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" fill="currentColor"/>
+      </svg>
+    </button>
   </div>
 </div>
