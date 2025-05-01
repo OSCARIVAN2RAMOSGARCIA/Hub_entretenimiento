@@ -3,8 +3,8 @@ import { Component, inject } from '@angular/core';
 import { MediaItem } from '../../../models/media-item';
 import { FavoritesService } from '../../../services/favorites.service';
 import { MediaService } from '../../../services/media-service.service';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, from } from 'rxjs';
+import { map, take, switchMap } from 'rxjs/operators';
 
 export abstract class BaseCarouselComponent {
   protected favoritesService = inject(FavoritesService);
@@ -23,7 +23,7 @@ export abstract class BaseCarouselComponent {
       this.getItems$(),
       this.currentIndex$
     ]).pipe(
-      map(([items, currentIndex]) => {
+      switchMap(async ([items, currentIndex]) => {
         if (!items || items.length === 0) return [];
         const endIndex = Math.min(
           currentIndex + this.visibleItems, 
@@ -59,7 +59,18 @@ export abstract class BaseCarouselComponent {
   }
 
   openModal(item: MediaItem): void {
-    console.log('Abrir modal para:', item.nombre);
+    // Convertir la promesa a observable para mantener la consistencia
+    from(this.getMediaDetails(item)).subscribe(details => {
+      console.log('Abrir modal para:', details);
+    });
+  }
+
+  private async getMediaDetails(item: MediaItem): Promise<MediaItem> {
+    if (item.tipo === 'pelicula') {
+      return await this.mediaService.getMovieById(item.id) ?? item;
+    } else {
+      return await this.mediaService.getSerieById(item.id) ?? item;
+    }
   }
 
   onItemOcultado(item: MediaItem) {

@@ -1,6 +1,5 @@
 {
-    "hub_entretenimiento": {
-      "peliculas": [
+      "movies": [
         {
           "nombre": "Avengers: Endgame",
           "genero": "Acción, Aventura, Ciencia ficción",
@@ -306,5 +305,5 @@
         }
       ]
     }
-  }
+  
   
