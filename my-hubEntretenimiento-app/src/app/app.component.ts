@@ -1,5 +1,4 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { DatosService } from './servicios/datos.service';
 import { MainCarouselComponent } from './components/main-carousel/main-carousel.component';
 import { HeaderComponent } from './components/header/header.component';
 import { CommonModule } from '@angular/common';

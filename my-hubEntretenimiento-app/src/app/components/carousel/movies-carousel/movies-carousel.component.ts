@@ -1,287 +1,88 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MediaItem } from '../../../models/media-item';
+import { FavoriteButtonComponent } from '../../buttons/favorite-button/favorite-button.component';
+import { HideButtonComponent } from '../../buttons/hide-button/hide-button.component';
+import { FavoritesService } from '../../../services/favorites.service';
+import { MediaService } from '../../../services/media-service.service';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-movies-carousel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    FavoriteButtonComponent,
+    HideButtonComponent,
+    CommonModule,
+    AsyncPipe
+  ],
   templateUrl: './movies-carousel.component.html',
   styleUrl: './movies-carousel.component.scss'
 })
 export class MoviesCarouselComponent {
-  movies: MediaItem[] =[
-    {
-      id: 1,
-      nombre: "Avengers: Endgame",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "181 min",
-      calificacion: "8.4",
-      img: "assets/img/the_avengers.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 2,
-      nombre: "Inception",
-      genero: "Acción, Ciencia ficción, Misterio",
-      duracion: "148 min",
-      calificacion: "8.8",
-      img: "assets/img/inception.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 3,
-      nombre: "The Dark Knight",
-      genero: "Acción, Crimen, Drama",
-      duracion: "152 min",
-      calificacion: "9.0",
-      img: "assets/img/the_dark_nigth.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 4,
-      nombre: "Titanic",
-      genero: "Drama, Romance",
-      duracion: "195 min",
-      calificacion: "7.8",
-      img: "assets/img/titanic.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 5,
-      nombre: "The Matrix",
-      genero: "Acción, Ciencia ficción",
-      duracion: "136 min",
-      calificacion: "8.7",
-      img: "assets/img/the_matrix.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 6,
-      nombre: "Interstellar",
-      genero: "Aventura, Drama, Ciencia ficción",
-      duracion: "169 min",
-      calificacion: "8.6",
-      img: "assets/img/interstellar.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 7,
-      nombre: "The Lion King",
-      genero: "Animación, Aventura, Drama",
-      duracion: "88 min",
-      calificacion: "8.5",
-      img: "assets/img/the_lion_king.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 8,
-      nombre: "Joker",
-      genero: "Crimen, Drama, Thriller",
-      duracion: "122 min",
-      calificacion: "8.5",
-      img: "assets/img/joker.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 9,
-      nombre: "Forrest Gump",
-      genero: "Drama, Romance",
-      duracion: "142 min",
-      calificacion: "8.8",
-      img: "assets/img/forrest_gump.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 10,
-      nombre: "Avatar",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "162 min",
-      calificacion: "7.8",
-      img: "assets/img/avatar.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 11,
-      nombre: "The Avengers",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "143 min",
-      calificacion: "8.0",
-      img: "assets/img/the_avengers.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 12,
-      nombre: "Guardians of the Galaxy",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "121 min",
-      calificacion: "8.0",
-      img: "assets/img/guardians_of_the_galaxy.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 13,
-      nombre: "The Pursuit of Happyness",
-      genero: "Drama",
-      duracion: "117 min",
-      calificacion: "8.0",
-      img: "assets/img/the_pursuit_of_happyness.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 14,
-      nombre: "The Godfather",
-      genero: "Crimen, Drama",
-      duracion: "175 min",
-      calificacion: "9.2",
-      img: "assets/img/the_godfather.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 15,
-      nombre: "Pulp Fiction",
-      genero: "Crimen, Drama",
-      duracion: "154 min",
-      calificacion: "8.9",
-      img: "assets/img/pulp_fiction.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 16,
-      nombre: "The Shawshank Redemption",
-      genero: "Drama",
-      duracion: "142 min",
-      calificacion: "9.3",
-      img: "assets/img/the_shawshank_redemption.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 17,
-      nombre: "The Silence of the Lambs",
-      genero: "Crimen, Drama, Thriller",
-      duracion: "118 min",
-      calificacion: "8.6",
-      img: "assets/img/the_silence_of_the_lambs.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 18,
-      nombre: "The Dark Knight Rises",
-      genero: "Acción, Crimen, Drama",
-      duracion: "164 min",
-      calificacion: "8.4",
-      img: "assets/img/the_dark_knight_rises.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 19,
-      nombre: "Star Wars: Episode IV - A New Hope",
-      genero: "Aventura, Ciencia ficción",
-      duracion: "121 min",
-      calificacion: "8.6",
-      img: "assets/img/star_wars:_episode_iv_-_a_new_hope.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 20,
-      nombre: "Blade Runner 2049",
-      genero: "Acción, Ciencia ficción, Drama",
-      duracion: "163 min",
-      calificacion: "8.0",
-      img: "assets/img/blade_runner_2049.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 21,
-      nombre: "Gladiator",
-      genero: "Acción, Aventura, Drama",
-      duracion: "155 min",
-      calificacion: "8.5",
-      img: "assets/img/gladiator.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 22,
-      nombre: "The Revenant",
-      genero: "Aventura, Drama, Suspenso",
-      duracion: "156 min",
-      calificacion: "8.0",
-      img: "assets/img/the_revenant.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 23,
-      nombre: "Jurassic Park",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "127 min",
-      calificacion: "8.1",
-      img: "assets/img/jurassic_park.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 24,
-      nombre: "Mad Max: Fury Road",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "120 min",
-      calificacion: "8.1",
-      img: "assets/img/mad_max:_fury_road.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 25,
-      nombre: "Deadpool",
-      genero: "Acción, Comedia, Ciencia ficción",
-      duracion: "108 min",
-      calificacion: "8.0",
-      img: "assets/img/deadpool.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 26,
-      nombre: "Spider-Man: Into the Spider-Verse",
-      genero: "Animación, Acción, Aventura",
-      duracion: "117 min",
-      calificacion: "8.4",
-      img: "assets/img/spider-man:_into_the_spider-verse.webp",
-      tipo: "pelicula"
-    },
-    {
-      id: 27,
-      nombre: "Spider-Man: No Way Home",
-      genero: "Acción, Aventura, Ciencia ficción",
-      duracion: "148 min",
-      calificacion: "8.3",
-      img: "assets/img/spider-man:_no_way_home.webp",
-      tipo: "pelicula"
-    }
-  ]
-  ;
-    // Agrega más movies según necesites
+  private favoritesService = inject(FavoritesService);
+  private mediaService = inject(MediaService);
 
-  currentIndex = 0;
-  visibleItems = this.movies.length;
+  // Estado reactivo del carrusel
+  private currentIndexSubject = new BehaviorSubject<number>(0);
+  currentIndex$ = this.currentIndexSubject.asObservable();
+  
+  // Configuración del carrusel
+  readonly visibleItems = 8;
+  readonly itemWidth = 180 + 24;
 
-  ngOnInit(): void {
-    // Datos ya están cargados localmente
-  }
+  // Datos de películas
+  movies$ = this.mediaService.movies$;
 
+  // Películas visibles calculadas reactivamente
+  visibleMovies$: Observable<MediaItem[]> = combineLatest([
+    this.movies$,
+    this.currentIndex$
+  ]).pipe(
+    map(([movies, currentIndex]) => {
+      if (!movies || movies.length === 0) return [];
+      const endIndex = Math.min(
+        currentIndex + this.visibleItems, 
+        movies.length
+      );
+      return movies.slice(currentIndex, endIndex);
+    })
+  );
+
+  // Métodos de navegación mejorados
   next(): void {
-    if (this.currentIndex < this.movies.length - this.visibleItems) {
-      this.currentIndex++;
-    }
+    this.movies$.pipe(take(1)).subscribe(movies => {
+      if (!movies || movies.length === 0) return;
+      const newIndex = Math.min(
+        this.currentIndexSubject.value + 1,
+        Math.max(0, movies.length - this.visibleItems)
+      );
+      this.currentIndexSubject.next(newIndex);
+    });
   }
 
   prev(): void {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-    }
+    const newIndex = Math.max(0, this.currentIndexSubject.value - 1);
+    this.currentIndexSubject.next(newIndex);
   }
 
-  get visibleSeries(): MediaItem[] {
-    return this.movies.slice(this.currentIndex, this.currentIndex + this.visibleItems);
+  // Métodos auxiliares
+  trackByMovieId(_index: number, movie: MediaItem): number {
+    return movie.id;
   }
 
-  openModal(item: MediaItem): void {
-    // Emitir al componente padre o manejar aquí
+  isFavorite(movie: MediaItem): Observable<boolean> {
+    return this.favoritesService.isFavorite(movie);
+  }
+
+  openModal(movie: MediaItem): void {
+    console.log('Abrir modal para:', movie.nombre);
+    // Implementa lógica para abrir modal aquí
+  }
+  onItemOcultado(item: MediaItem) {
+    console.log('Ítem ocultado:', item.nombre);
+    // Puedes forzar una recarga de datos si es necesario
   }
 }

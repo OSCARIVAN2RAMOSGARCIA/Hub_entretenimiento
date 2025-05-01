@@ -1,9 +1,9 @@
 export interface MediaItem {
     id: number;
     nombre: string;
-    genero:string,
+    genero:string;
     duracion?: string;
-    calificacion:string,
+    calificacion:string;
     img: string;
     tipo:string;
   }

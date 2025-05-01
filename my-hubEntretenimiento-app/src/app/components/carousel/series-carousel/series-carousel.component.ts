@@ -1,190 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MediaItem } from '../../../models/media-item';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { HideButtonComponent } from '../../buttons/hide-button/hide-button.component';
+import { FavoriteButtonComponent } from '../../buttons/favorite-button/favorite-button.component';
+import { FavoritesService } from '../../../services/favorites.service';
+import { MediaService } from '../../../services/media-service.service';
+import { BehaviorSubject, Observable, combineLatest, map, take } from 'rxjs';
 
 
 @Component({
   standalone: true,
   selector: 'app-series-carousel',
   templateUrl: './series-carousel.component.html',
-  imports:[CommonModule],
+  imports:[CommonModule,
+          HideButtonComponent,
+          FavoriteButtonComponent,
+          AsyncPipe],
   styleUrls: ['./series-carousel.component.scss']
 })
-export class SeriesCarouselComponent implements OnInit {
-  series: MediaItem[] = [
-    {
-      id: 1,
-      nombre: "Breaking Bad",
-      genero: "Crimen, Drama, Suspenso",
-      duracion: "47 min por episodio",
-      calificacion: "9.5",
-      img: "assets/img/breaking_bad.webp",
-      tipo: "serie"
-    },
-    {
-      id: 2,
-      nombre: "Stranger Things",
-      genero: "Drama, Fantasía, Horror",
-      duracion: "50 min por episodio",
-      calificacion: "8.8",
-      img: "assets/img/stranger_things.webp",
-      tipo: "serie"
-    },
-    {
-      id: 3,
-      nombre: "Game of Thrones",
-      genero: "Acción, Aventura, Drama",
-      duracion: "60 min por episodio",
-      calificacion: "9.3",
-      img: "assets/img/game_of_thrones.webp",
-      tipo: "serie"
-    },
-    {
-      id: 4,
-      nombre: "The Mandalorian",
-      genero: "Acción, Aventura, Fantasía",
-      duracion: "40 min por episodio",
-      calificacion: "8.8",
-      img: "assets/img/the_mandalorian.webp",
-      tipo: "serie"
-    },
-    {
-      id: 5,
-      nombre: "The Office",
-      genero: "Comedia",
-      duracion: "22 min por episodio",
-      calificacion: "8.9",
-      img: "assets/img/the_office.webp",
-      tipo: "serie"
-    },
-    {
-      id: 6,
-      nombre: "Friends",
-      genero: "Comedia, Romance",
-      duracion: "22 min por episodio",
-      calificacion: "8.9",
-      img: "assets/img/friends.webp",
-      tipo: "serie"
-    },
-    {
-      id: 7,
-      nombre: "The Witcher",
-      genero: "Aventura, Drama, Fantasía",
-      duracion: "60 min por episodio",
-      calificacion: "8.0",
-      img: "assets/img/the_witcher.webp",
-      tipo: "serie"
-    },
-    {
-      id: 8,
-      nombre: "Black Mirror",
-      genero: "Drama, Ciencia ficción, Thriller",
-      duracion: "60 min por episodio",
-      calificacion: "8.8",
-      img: "assets/img/black_mirror.webp",
-      tipo: "serie"
-    },
-    {
-      id: 9,
-      nombre: "Sherlock",
-      genero: "Crimen, Drama, Misterio",
-      duracion: "90 min por episodio",
-      calificacion: "9.1",
-      img: "assets/img/sherlock.webp",
-      tipo: "serie"
-    },
-    {
-      id: 10,
-      nombre: "Narcos",
-      genero: "Crimen, Drama",
-      duracion: "50 min por episodio",
-      calificacion: "8.8",
-      img: "assets/img/narcos.webp",
-      tipo: "serie"
-    },
-    {
-      id: 11,
-      nombre: "Money Heist",
-      genero: "Crimen, Drama, Suspenso",
-      duracion: "45 min por episodio",
-      calificacion: "8.3",
-      img: "assets/img/money_heist.webp",
-      tipo: "serie"
-    },
-    {
-      id: 12,
-      nombre: "The Boys",
-      genero: "Acción, Comedia, Crimen",
-      duracion: "60 min por episodio",
-      calificacion: "8.7",
-      img: "assets/img/the_boys.webp",
-      tipo: "serie"
-    },
-    {
-      id: 13,
-      nombre: "Peaky Blinders",
-      genero: "Crimen, Drama",
-      duracion: "60 min por episodio",
-      calificacion: "8.8",
-      img: "assets/img/peaky_blinders.webp",
-      tipo: "serie"
-    },
-    {
-      id: 14,
-      nombre: "The Crown",
-      genero: "Biografía, Drama, Historia",
-      duracion: "60 min por episodio",
-      calificacion: "8.7",
-      img: "assets/img/the_crown.webp",
-      tipo: "serie"
-    },
-    {
-      id: 15,
-      nombre: "The Umbrella Academy",
-      genero: "Acción, Aventura, Comedia",
-      duracion: "50 min por episodio",
-      calificacion: "8.0",
-      img: "assets/img/the_umbrella_academy.webp",
-      tipo: "serie"
-    },
-    {
-      id: 16,
-      nombre: "Chernobyl",
-      genero: "Drama, Historia, Thriller",
-      duracion: "60 min por episodio",
-      calificacion: "9.4",
-      img: "assets/img/chernobyl.webp",
-      tipo: "serie"
-    }
-  ]
+export class SeriesCarouselComponent{
+  private favoritesService = inject(FavoritesService);
+  private mediaService = inject(MediaService);
+  private currentIndexSubject = new BehaviorSubject<number>(0);
   
-  ;
     // Agrega más series según necesites
+    currentIndex$ = this.currentIndexSubject.asObservable();
+    // Configuración del carrusel
+  readonly visibleItems = 8;
+  readonly itemWidth = 180 + 24;
+  series$ = this.mediaService.series$;
+    favorites$ = this.favoritesService.favorites$;
 
-  currentIndex = 0;
-  visibleItems = this.series.length;
+    visibleSeries$: Observable<MediaItem[]> = combineLatest([
+      this.series$,
+      this.currentIndex$
+    ]).pipe(
+      map(([series, currentIndex]) => {
+        if (!series || series.length === 0) return [];
+        const endIndex = Math.min(
+          currentIndex + this.visibleItems, 
+          series.length
+        );
+        return series.slice(currentIndex, endIndex);
+      })
+    );
+  
 
-  ngOnInit(): void {
-    // Datos ya están cargados localmente
-  }
 
-  next(): void {
-    if (this.currentIndex < this.series.length - this.visibleItems) {
-      this.currentIndex++;
+    next(): void {
+      this.series$.pipe(take(1)).subscribe(series => {
+        if (!series || series.length === 0) return;
+        const newIndex = Math.min(
+          this.currentIndexSubject.value + 1,
+          Math.max(0, series.length - this.visibleItems)
+        );
+        this.currentIndexSubject.next(newIndex);
+      });
     }
-  }
 
-  prev(): void {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
+    prev(): void {
+      const newIndex = Math.max(0, this.currentIndexSubject.value - 1);
+      this.currentIndexSubject.next(newIndex);
     }
+
+    trackBySerieId(_index: number, serie: MediaItem): number {
+      return serie.id;
+    }
+    isFavorite(serie: MediaItem): Observable<boolean> {
+      return this.favoritesService.isFavorite(serie);
+    }
+  openModal(serie: MediaItem): void {
+    console.log('Abrir modal para:', serie.nombre);
+    // Implementa lógica para abrir modal aquí
   }
 
-  get visibleSeries(): MediaItem[] {
-    return this.series.slice(this.currentIndex, this.currentIndex + this.visibleItems);
+  onItemOcultado(item: MediaItem) {
+    console.log('Ítem ocultado:', item.nombre);
+    // Puedes forzar una recarga de datos si es necesario
   }
 
-  openModal(item: MediaItem): void {
-    // Emitir al componente padre o manejar aquí
-  }
+
 }

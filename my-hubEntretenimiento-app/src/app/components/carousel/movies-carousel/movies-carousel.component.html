@@ -5,7 +5,7 @@
     <button 
       class="nav-button prev-button" 
       (click)="prev()" 
-      [disabled]="currentIndex === 0"
+      [disabled]="(currentIndex$ | async) === 0"
       aria-label="Anterior"
     >
       <svg width="24" height="24" viewBox="0 0 24 24">
@@ -15,7 +15,7 @@
 
     <div class="carousel-track">
       <div 
-        *ngFor="let movie of movies" 
+        *ngFor="let movie of visibleMovies$ | async; trackBy: trackByMovieId" 
         class="carousel-item"
         (click)="openModal(movie)"
       >
@@ -38,16 +38,22 @@
         <div class="item-info">
           <h3 class="movies-title">{{ movie.nombre }}</h3>
           <p class="movies-duration">{{ movie.duracion }}</p>
+          <div class="button-container">
+            <app-favorite-button [item]="movie"></app-favorite-button>
+            <app-hide-button 
+              [item]="movie" 
+              (ocultado)="onItemOcultado($event)">
+            </app-hide-button>
+          </div>
         </div>
       </div>
     </div>
 
     <button 
-      class="nav-button next-button" 
-      (click)="next()" 
-      [disabled]="currentIndex >= movies.length - visibleItems"
-      aria-label="Siguiente"
-    >
+    class="nav-button next-button" 
+    (click)="next()" 
+    aria-label="Siguiente"
+  >
       <svg width="24" height="24" viewBox="0 0 24 24">
         <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" fill="currentColor"/>
       </svg>
