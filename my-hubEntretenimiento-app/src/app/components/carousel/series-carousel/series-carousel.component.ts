@@ -20,7 +20,7 @@ import { BaseCarouselComponent } from '../base-carousel/base-carousel.component'
           AsyncPipe]
 })
 export class SeriesCarouselComponent extends BaseCarouselComponent {
-  title = 'Series Populares';
+  override title = 'Películas Populares'; // Añade el modificador override
 
   override getItems$() {
     return this.mediaService.series$;

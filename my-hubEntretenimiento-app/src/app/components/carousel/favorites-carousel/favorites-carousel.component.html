@@ -4,8 +4,9 @@
     <div class="carousel">
       <div 
         class="col"
-        *ngFor="let favorite of favorites; trackBy: trackById"
-      >
+        *ngFor="let favorite of (favorites$ | async)?.slice()?.reverse() || []; trackBy: trackById">
+          <!-- Contenido -->
+      
         <img 
           [src]="favorite.img" 
           [alt]="favorite.nombre" 

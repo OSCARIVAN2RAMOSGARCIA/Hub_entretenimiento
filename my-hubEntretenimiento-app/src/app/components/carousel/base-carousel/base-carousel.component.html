@@ -1,3 +1,4 @@
+<ng-container *ngIf="getVisibleItems$() | async as items; else loading">
 <div class="carousel-container">
     <h2 class="carousel-title">{{ title }}</h2>
     
@@ -60,3 +61,7 @@
       </button>
     </div>
   </div>
+</ng-container>
+<ng-template #loading>
+  <div class="loading-indicator">Cargando...</div>
+</ng-template>
