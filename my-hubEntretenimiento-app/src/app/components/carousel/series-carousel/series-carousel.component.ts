@@ -8,21 +8,22 @@ import { MediaService } from '../../../services/media-service.service';
 import { BehaviorSubject, Observable, combineLatest, map, take } from 'rxjs';
 import { BaseCarouselComponent } from '../base-carousel/base-carousel.component';
 
-
 @Component({
-  standalone: true,
-  selector: 'app-series-carousel',
-  templateUrl: '../base-carousel/base-carousel.component.html',  // Ruta relativa al archivo común
-  styleUrls: ['../base-carousel/base-carousel.component.scss'],
-  imports:[CommonModule,
-          HideButtonComponent,
-          FavoriteButtonComponent,
-          AsyncPipe]
+  standalone: true,  // El componente es independiente y no requiere ser declarado en un módulo Angular
+  selector: 'app-series-carousel',  // Selector del componente para ser utilizado en otras plantillas
+  templateUrl: '../base-carousel/base-carousel.component.html',  // Reutiliza la plantilla de `BaseCarouselComponent`
+  styleUrls: ['../base-carousel/base-carousel.component.scss'],  // Reutiliza los estilos del `BaseCarouselComponent`
+  imports:[CommonModule,  // Importa CommonModule para usar directivas estándar como ngIf, ngFor
+           HideButtonComponent,  // Importa el botón de ocultar para los items del carrusel
+           FavoriteButtonComponent,  // Importa el botón de favorito para cada item del carrusel
+           AsyncPipe]  // Importa el AsyncPipe para manejar suscripciones a observables de manera eficiente en la plantilla
 })
 export class SeriesCarouselComponent extends BaseCarouselComponent {
-  override title = 'Películas Populares'; // Añade el modificador override
+  // Override del título para este carrusel específico (series populares)
+  override title = 'Películas Populares';  // Título que se muestra en el carrusel. Aquí parece haber un error, ya que debería ser "Series Populares" o algo relacionado con series.
 
+  // Implementación del método abstracto de `BaseCarouselComponent`, que devuelve los items de series
   override getItems$() {
-    return this.mediaService.series$;
+    return this.mediaService.series$;  // Llama al servicio de medios para obtener la lista de series
   }
 }
