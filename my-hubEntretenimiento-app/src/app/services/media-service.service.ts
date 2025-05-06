@@ -1,442 +1,80 @@
 import { Injectable } from '@angular/core';
 import { MediaItem } from '../models/media-item';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MediaService {
-  private mediaData = {
-    movies: [
-      {
-        id: 1,
-        nombre: "Avengers: Endgame",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "181 min",
-        calificacion: "8.4",
-        img: "assets/img/Avenger_Endgame_Poster_Oficial.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 2,
-        nombre: "Inception",
-        genero: "Acción, Ciencia ficción, Misterio",
-        duracion: "148 min",
-        calificacion: "8.8",
-        img: "assets/img/inception.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 3,
-        nombre: "The Dark Knight",
-        genero: "Acción, Crimen, Drama",
-        duracion: "152 min",
-        calificacion: "9.0",
-        img: "assets/img/the_Dark_Nigth.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 4,
-        nombre: "Titanic",
-        genero: "Drama, Romance",
-        duracion: "195 min",
-        calificacion: "7.8",
-        img: "assets/img/titanic.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 5,
-        nombre: "The Matrix",
-        genero: "Acción, Ciencia ficción",
-        duracion: "136 min",
-        calificacion: "8.7",
-        img: "assets/img/the_matrix.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 6,
-        nombre: "Interstellar",
-        genero: "Aventura, Drama, Ciencia ficción",
-        duracion: "169 min",
-        calificacion: "8.6",
-        img: "assets/img/Interstellar.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 7,
-        nombre: "The Lion King",
-        genero: "Animación, Aventura, Drama",
-        duracion: "88 min",
-        calificacion: "8.5",
-        img: "assets/img/The_Lion_King.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 8,
-        nombre: "Joker",
-        genero: "Crimen, Drama, Thriller",
-        duracion: "122 min",
-        calificacion: "8.5",
-        img: "assets/img/joker.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 9,
-        nombre: "Forrest Gump",
-        genero: "Drama, Romance",
-        duracion: "142 min",
-        calificacion: "8.8",
-        img: "assets/img/Forrest_Gump.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 10,
-        nombre: "Avatar",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "162 min",
-        calificacion: "7.8",
-        img: "assets/img/Avatar.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 11,
-        nombre: "The Avengers",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "143 min",
-        calificacion: "8.0",
-        img: "assets/img/The_Avengers.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 12,
-        nombre: "Guardians of the Galaxy",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "121 min",
-        calificacion: "8.0",
-        img: "assets/img/Guardians_of_the_Galaxy.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 13,
-        nombre: "The Pursuit of Happyness",
-        genero: "Drama",
-        duracion: "117 min",
-        calificacion: "8.0",
-        img: "assets/img/The_Pursuit_of_Happyness.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 14,
-        nombre: "The Godfather",
-        genero: "Crimen, Drama",
-        duracion: "175 min",
-        calificacion: "9.2",
-        img: "assets/img/the_godfather.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 15,
-        nombre: "Pulp Fiction",
-        genero: "Crimen, Drama",
-        duracion: "154 min",
-        calificacion: "8.9",
-        img: "assets/img/pulp_fiction.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 16,
-        nombre: "The Shawshank Redemption",
-        genero: "Drama",
-        duracion: "142 min",
-        calificacion: "9.3",
-        img: "assets/img/the_shawshank_redemption.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 17,
-        nombre: "The Silence of the Lambs",
-        genero: "Crimen, Drama, Thriller",
-        duracion: "118 min",
-        calificacion: "8.6",
-        img: "assets/img/the_silence_of_the_lambs.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 18,
-        nombre: "The Dark Knight Rises",
-        genero: "Acción, Crimen, Drama",
-        duracion: "164 min",
-        calificacion: "8.4",
-        img: "assets/img/the_dark_knight_rises.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 19,
-        nombre: "Star Wars: Episode IV - A New Hope",
-        genero: "Aventura, Ciencia ficción",
-        duracion: "121 min",
-        calificacion: "8.6",
-        img: "assets/img/star_wars:_episode_iv_-_a_new_hope.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 20,
-        nombre: "Blade Runner 2049",
-        genero: "Acción, Ciencia ficción, Drama",
-        duracion: "163 min",
-        calificacion: "8.0",
-        img: "assets/img/blade_runner_2049.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 21,
-        nombre: "Gladiator",
-        genero: "Acción, Aventura, Drama",
-        duracion: "155 min",
-        calificacion: "8.5",
-        img: "assets/img/gladiator.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 22,
-        nombre: "The Revenant",
-        genero: "Aventura, Drama, Suspenso",
-        duracion: "156 min",
-        calificacion: "8.0",
-        img: "assets/img/the_revenant.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 23,
-        nombre: "Jurassic Park",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "127 min",
-        calificacion: "8.1",
-        img: "assets/img/jurassic_park.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 24,
-        nombre: "Mad Max: Fury Road",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "120 min",
-        calificacion: "8.1",
-        img: "assets/img/mad_max:_fury_road.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 25,
-        nombre: "Deadpool",
-        genero: "Acción, Comedia, Ciencia ficción",
-        duracion: "108 min",
-        calificacion: "8.0",
-        img: "assets/img/deadpool.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 26,
-        nombre: "Spider-Man: Into the Spider-Verse",
-        genero: "Animación, Acción, Aventura",
-        duracion: "117 min",
-        calificacion: "8.4",
-        img: "assets/img/spider-man:_into_the_spider-verse.webp",
-        tipo: "pelicula"
-      },
-      {
-        id: 27,
-        nombre: "Spider-Man: No Way Home",
-        genero: "Acción, Aventura, Ciencia ficción",
-        duracion: "148 min",
-        calificacion: "8.3",
-        img: "assets/img/spider-man:_no_way_home.webp",
-        tipo: "pelicula"
-      }
-    ],
-    series:[
-      {
-        id: 1,
-        nombre: "Breaking Bad",
-        genero: "Crimen, Drama, Suspenso",
-        duracion: "47 min por episodio",
-        calificacion: "9.5",
-        img: "assets/img/breaking_bad.webp",
-        tipo: "serie"
-      },
-      {
-        id: 2,
-        nombre: "Stranger Things",
-        genero: "Drama, Fantasía, Horror",
-        duracion: "50 min por episodio",
-        calificacion: "8.8",
-        img: "assets/img/stranger_things.webp",
-        tipo: "serie"
-      },
-      {
-        id: 3,
-        nombre: "Game of Thrones",
-        genero: "Acción, Aventura, Drama",
-        duracion: "60 min por episodio",
-        calificacion: "9.3",
-        img: "assets/img/game_of_thrones.webp",
-        tipo: "serie"
-      },
-      {
-        id: 4,
-        nombre: "The Mandalorian",
-        genero: "Acción, Aventura, Fantasía",
-        duracion: "40 min por episodio",
-        calificacion: "8.8",
-        img: "assets/img/the_mandalorian.webp",
-        tipo: "serie"
-      },
-      {
-        id: 5,
-        nombre: "The Office",
-        genero: "Comedia",
-        duracion: "22 min por episodio",
-        calificacion: "8.9",
-        img: "assets/img/the_office.webp",
-        tipo: "serie"
-      },
-      {
-        id: 6,
-        nombre: "Friends",
-        genero: "Comedia, Romance",
-        duracion: "22 min por episodio",
-        calificacion: "8.9",
-        img: "assets/img/friends.webp",
-        tipo: "serie"
-      },
-      {
-        id: 7,
-        nombre: "The Witcher",
-        genero: "Aventura, Drama, Fantasía",
-        duracion: "60 min por episodio",
-        calificacion: "8.0",
-        img: "assets/img/the_witcher.webp",
-        tipo: "serie"
-      },
-      {
-        id: 8,
-        nombre: "Black Mirror",
-        genero: "Drama, Ciencia ficción, Thriller",
-        duracion: "60 min por episodio",
-        calificacion: "8.8",
-        img: "assets/img/black_mirror.webp",
-        tipo: "serie"
-      },
-      {
-        id: 9,
-        nombre: "Sherlock",
-        genero: "Crimen, Drama, Misterio",
-        duracion: "90 min por episodio",
-        calificacion: "9.1",
-        img: "assets/img/sherlock.webp",
-        tipo: "serie"
-      },
-      {
-        id: 10,
-        nombre: "Narcos",
-        genero: "Crimen, Drama",
-        duracion: "50 min por episodio",
-        calificacion: "8.8",
-        img: "assets/img/narcos.webp",
-        tipo: "serie"
-      },
-      {
-        id: 11,
-        nombre: "Money Heist",
-        genero: "Crimen, Drama, Suspenso",
-        duracion: "45 min por episodio",
-        calificacion: "8.3",
-        img: "assets/img/money_heist.webp",
-        tipo: "serie"
-      },
-      {
-        id: 12,
-        nombre: "The Boys",
-        genero: "Acción, Comedia, Crimen",
-        duracion: "60 min por episodio",
-        calificacion: "8.7",
-        img: "assets/img/the_boys.webp",
-        tipo: "serie"
-      },
-      {
-        id: 13,
-        nombre: "Peaky Blinders",
-        genero: "Crimen, Drama",
-        duracion: "60 min por episodio",
-        calificacion: "8.8",
-        img: "assets/img/peaky_blinders.webp",
-        tipo: "serie"
-      },
-      {
-        id: 14,
-        nombre: "The Crown",
-        genero: "Biografía, Drama, Historia",
-        duracion: "60 min por episodio",
-        calificacion: "8.7",
-        img: "assets/img/the_crown.webp",
-        tipo: "serie"
-      },
-      {
-        id: 15,
-        nombre: "The Umbrella Academy",
-        genero: "Acción, Aventura, Comedia",
-        duracion: "50 min por episodio",
-        calificacion: "8.0",
-        img: "assets/img/the_umbrella_academy.webp",
-        tipo: "serie"
-      },
-      {
-        id: 16,
-        nombre: "Chernobyl",
-        genero: "Drama, Historia, Thriller",
-        duracion: "60 min por episodio",
-        calificacion: "9.4",
-        img: "assets/img/chernobyl.webp",
-        tipo: "serie"
-      }
-    ]
-  };
+  private mediaDataUrl = 'assets/data/media-data.json';
+  private mediaData: { movies: MediaItem[]; series: MediaItem[] } = { movies: [], series: [] };
 
-  constructor() { }
+  constructor(private http: HttpClient) {
+    this.loadInitialData();
+  }
 
   // BehaviorSubjects para los datos reactivos
-  private moviesSubject = new BehaviorSubject<MediaItem[]>(this.mediaData.movies);
-  private seriesSubject = new BehaviorSubject<MediaItem[]>(this.mediaData.series);
+  private moviesSubject = new BehaviorSubject<MediaItem[]>([]);
+  private seriesSubject = new BehaviorSubject<MediaItem[]>([]);
 
-  // Observables públicos
-  movies$ = this.moviesSubject.asObservable();
-  series$ = this.seriesSubject.asObservable();
+  // Observables públicos con shareReplay para caching
+  movies$ = this.moviesSubject.asObservable().pipe(shareReplay(1));
+  series$ = this.seriesSubject.asObservable().pipe(shareReplay(1));
 
-  // Métodos para películas
-  getMovies(): MediaItem[] {
-    return [...this.mediaData.movies];
-  }
-// Método para actualizar
-updateMovies(movies: MediaItem[]): void {
-  this.moviesSubject.next(movies);
-}
-  getMovieById(id: number): MediaItem | undefined {
-    return this.mediaData.movies.find(m => m.id === id);
-  }
-// En MediaService
-removeMovie(id: number): Observable<void> {
-  this.mediaData.movies = this.mediaData.movies.filter(m => m.id !== id);
-  this.moviesSubject.next([...this.mediaData.movies]);
-  return of(undefined); // Retornamos un Observable para encadenar operadores
-}
-
-
-
-  // Métodos para series
-  getSeries(): MediaItem[] {
-    return [...this.mediaData.series];
+  // Cargar datos iniciales desde el JSON
+  private loadInitialData(): void {
+    this.http.get<{ movies: MediaItem[]; series: MediaItem[] }>(this.mediaDataUrl)
+      .pipe(
+        catchError(error => {
+          console.error('Error loading media data:', error);
+          return of({ movies: [], series: [] });
+        })
+      )
+      .subscribe({
+        next: data => {
+          this.mediaData = data;
+          this.moviesSubject.next([...this.mediaData.movies]);
+          this.seriesSubject.next([...this.mediaData.series]);
+        },
+        error: err => console.error('Failed to load media data', err)
+      });
   }
 
-  getSerieById(id: number): MediaItem | undefined {
-    return this.mediaData.series.find(s => s.id === id);
+  // Métodos para películas (optimizados)
+  getMovies(): Observable<MediaItem[]> {
+    return this.movies$;
+  }
+
+  getMovieById(id: number): Observable<MediaItem | undefined> {
+    return this.movies$.pipe(
+      map(movies => movies.find(m => m.id === id))
+    );
+  }
+
+  // Métodos para series (optimizados)
+  getSeries(): Observable<MediaItem[]> {
+    return this.series$;
+  }
+
+  getSerieById(id: number): Observable<MediaItem | undefined> {
+    return this.series$.pipe(
+      map(series => series.find(s => s.id === id))
+    );
+  }
+
+
+  updateMovies(movies: MediaItem[]): Observable<void> {
+    this.mediaData.movies = [...movies];
+    this.moviesSubject.next([...this.mediaData.movies]);
+    return of(undefined);
+  }
+
+  removeMovie(id: number): Observable<void> {
+    this.mediaData.movies = this.mediaData.movies.filter(m => m.id !== id);
+    this.moviesSubject.next([...this.mediaData.movies]);
+    return of(undefined);
   }
 
   removeSerie(id: number): Observable<void> {
@@ -446,15 +84,21 @@ removeMovie(id: number): Observable<void> {
   }
 
   // Métodos generales
-  getAllMedia(): MediaItem[] {
-    return [...this.mediaData.movies, ...this.mediaData.series];
+  getAllMedia(): Observable<MediaItem[]> {
+    return this.movies$.pipe(
+      map(movies => {
+        const series = this.seriesSubject.value;
+        return [...movies, ...series];
+      })
+    );
   }
 
-  getMediaByType(type: 'pelicula' | 'serie'): MediaItem[] {
+  getMediaByType(type: 'pelicula' | 'serie'): Observable<MediaItem[]> {
     return type === 'pelicula' ? this.getMovies() : this.getSeries();
   }
 
-  getMediaByIdAndType(id: number, type: 'pelicula' | 'serie'): MediaItem | undefined {
+  getMediaByIdAndType(id: number, type: 'pelicula' | 'serie'): Observable<MediaItem | undefined> {
     return type === 'pelicula' ? this.getMovieById(id) : this.getSerieById(id);
   }
+
 }

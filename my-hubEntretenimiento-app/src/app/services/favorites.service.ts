@@ -84,6 +84,10 @@ export class FavoritesService {
   }
 
   private saveToStorage(favorites: MediaItem[]): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(favorites));
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(favorites));
+    } catch (e) {
+      console.error('Failed to save favorites', e);
+    }
   }
 }
