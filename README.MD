@@ -8,7 +8,8 @@ Aplicacion de streaming con una gran variedad de peliculas y series para disfrut
 ![Captura de pantalla 1](/Resourses/login.png)  
 ![Captura de pantalla 2](/Resourses/home.png) 
 ![Captura de pantalla 3](/Resourses/home2.png) 
-
+![Captura de pantalla 4](/Resourses/codeCoverage.png) 
+![Captura de pantalla 5](/Resourses/test.png) 
 
 ## Instalación y Uso  
 Sigue estos pasos para ejecutar Komodo TV en tu máquina:
@@ -22,7 +23,7 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 
 ## Desarrollo  
 ## Problemas conocidos
-- 🛠Aun me falta direccionar las imagenes correspondientes para cada pelicula , me falta la implementacion de agregar a favoritos y ocultar 
+- 🛠 Falto implementar todos los test.  
 
 ## Retrospectiva
   
