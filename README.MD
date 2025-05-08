@@ -28,10 +28,11 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 ## Retrospectiva
   
    1. ¿Qué hice bien?  
-   - Logre manipular eficazmente los componentes, las routes, asi como tambien logre entender como es que funciona main.ts y la importancia que tiene, ademas implementar los conocimientos impartidos en el curso de udemy y las clases impartidas
+   - Logre completar la responsavidad, performance del codigo utilizando abstraccion, polimorfismo, complete la implementacion de asincronos, ademas los datos se manejaron de forma reactiva a través de observables, tambien almacene los favoritos en localstorage
+   ademas implemente mi json como si fuera una API asi simulando peticiones http, ya nada mas se sustituiria por una API si se desea asi  
 
    2. ¿Qué no salió bien?
-   - No logre implementar mi servicio para consumir el json y de momento estoy trabajando con arreglos, de momento no he realizado lo responsivo completamente de la pagina 
+   - No logre completar los test, me falta inmplentar la opcion de remover favoritos 
 
    3. ¿Qué puedo hacer diferente?
-   - Implemtar la interface para que sea mas facil de acceder a la informacion de mis arreglos 
+   - Enfocarme mas en los test asi como tambien saber leer los errores que me arroja y analizar el code coverage 
