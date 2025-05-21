@@ -1,6 +1,9 @@
 # Komodo TV 🎬  
 *Aplicacion de angular funcional,sobre contenido de streaming con consumo a base de datos SQL SERVER , con una API desarrollada en .NET.*
 
+# Mockup de figma 
+https://www.figma.com/design/FZ01wSZviG2jvTYJfvo3db/Untitled?node-id=3-3&p=f&t=94U8sSarTeaif8Yj-0
+
 ## Descripción  
 Aplicacion de streaming con una gran variedad de peliculas y series para disfrutar con tu familia. 
 
