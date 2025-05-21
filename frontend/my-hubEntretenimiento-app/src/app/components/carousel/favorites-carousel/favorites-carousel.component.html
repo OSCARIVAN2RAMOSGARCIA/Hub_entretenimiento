@@ -1,0 +1,20 @@
+<div *ngIf="favorites$ | async as favorites">
+  <div *ngIf="favorites.length > 0" class="carousel-wrapper">
+    <h2>Favorites</h2>
+    <div class="carousel">
+      <div 
+        class="col"
+        *ngFor="let favorite of (favorites$ | async)?.slice()?.reverse() || []; trackBy: trackById">
+          <!-- Contenido -->
+      
+        <img 
+          [src]="favorite.imagen" 
+          [alt]="favorite.nombre" 
+          class="favorite-imagen"
+          (error)="favorite.imagen = 'assets/default-image.jpg'"
+        >
+        <h4>{{ favorite.nombre }}</h4>
+      </div>
+    </div>
+  </div>
+</div>
