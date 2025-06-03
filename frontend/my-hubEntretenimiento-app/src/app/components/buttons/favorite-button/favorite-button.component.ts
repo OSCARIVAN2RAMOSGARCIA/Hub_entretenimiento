@@ -10,11 +10,12 @@ import { AsyncPipe } from '@angular/common';
   imports: [AsyncPipe],
   template: `
   <button 
-  class="fav-button" 
-  (click)="toggleFavorite()" 
-  [class.favorite]="(isFavorite$ | async)">
-{{ (isFavorite$ | async) ? 'Favorito' : 'Agregar' }}
-</button>
+    class="fav-button" 
+    (click)="toggleFavorite()" 
+    [class.favorite]="(isFavorite$ | async)"
+    [disabled]="isLoading">
+    {{ (isFavorite$ | async) ? 'Favorito' : 'Agregar' }}
+  </button>
   `,
 })
 export class FavoriteButtonComponent implements OnInit, OnDestroy {
@@ -23,27 +24,39 @@ export class FavoriteButtonComponent implements OnInit, OnDestroy {
 
   @Input({ required: true }) item!: MediaItem;
   isFavorite$!: Observable<boolean>;
+  isLoading = false;
 
-  ngOnInit() {
-    this.updateFavoriteStatus();
+  ngOnInit(): void {
+    this.loadFavoriteStatus();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  toggleFavorite(): void {
-    this.favoritesService.toggleFavorite(this.item).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
-      error: (err) => console.error('Error toggling favorite', err)
-    });
-  }
-
-  private updateFavoriteStatus(): void {
+  private loadFavoriteStatus(): void {
     this.isFavorite$ = this.favoritesService.isFavorite(this.item).pipe(
       takeUntil(this.destroy$)
     );
+  }
+
+  toggleFavorite(): void {
+    if (this.isLoading) return;
+    
+    this.isLoading = true;
+    this.favoritesService.toggleFavorite(this.item).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: () => {
+        this.isLoading = false;
+        // Recargar el estado después de cambiar
+        this.loadFavoriteStatus();
+      },
+      error: (err) => {
+        console.error('Error toggling favorite', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

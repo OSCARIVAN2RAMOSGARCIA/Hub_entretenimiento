@@ -14,6 +14,7 @@ namespace ContenidoAPI.Models.Entities
         public string Imagen { get; set; }
         public int IdTipo { get; set; }
         public TipoContenido Tipo { get; set; }
+        
         public ICollection<Favorito> Favoritos { get; set; }
     }
 }

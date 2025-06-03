@@ -1,110 +1,198 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, tap, map, filter } from 'rxjs/operators';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { map, shareReplay, catchError, finalize, tap, switchMap, take } from 'rxjs/operators';
 import { MediaItem } from '../models/media-item';
+import { FavoriteItem } from '../models/favorite-item';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
-  // Defino una clave para guardar y recuperar los favoritos desde localStorage
-  private storageKey = 'media_favorites';
-
-  // Uso un BehaviorSubject para mantener el estado actual de los favoritos
-  private _favorites = new BehaviorSubject<MediaItem[]>(this.loadFromStorage());
+  private readonly storageKey = 'media_favorites';
+  private readonly apiBaseUrl = 'http://localhost:5057/api';
   
-  // Expongo los favoritos como observable para que otros componentes puedan suscribirse
-  favorites$ = this._favorites.asObservable();
+  private currentUserIdSubject = new BehaviorSubject<number | null>(null);
+  private favoritesSubject = new BehaviorSubject<MediaItem[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  constructor() {
-    // Carga inicial de favoritos desde almacenamiento local, si hay
-    this.loadInitialFavorites();
+  public favorites$ = this.favoritesSubject.asObservable().pipe(shareReplay(1));
+  public loading$ = this.loadingSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.setupUserChangeHandler();
   }
 
-  // Verifico si hay datos almacenados y los cargo en el subject
-  private loadInitialFavorites() {
-    const storedFavorites = this.loadFromStorage();
-    if (storedFavorites.length > 0) {
-      this._favorites.next(storedFavorites);
-    }
+  // Métodos públicos
+  setCurrentUser(userId: number | null): void {
+    this.currentUserIdSubject.next(userId);
   }
 
-  // Metodo que permite verificar si un item esta marcado como favorito
   isFavorite(item: MediaItem): Observable<boolean> {
     return this.favorites$.pipe(
-      map(favs => favs.some(fav => 
-        fav?.id === item?.id && fav?.tipoContenido === item?.tipoContenido
+      map(favorites => favorites.some(fav => 
+        fav.id === item.id && 
+        fav.tipoContenido === item.tipoContenido
       ))
     );
   }
 
-  // Metodo para agregar un item a la lista de favoritos, si no esta ya presente
   addToFavorites(item: MediaItem): Observable<void> {
-    return new Observable(subscriber => {
-      // Valido el item antes de continuar
-      if (!this.isValidMediaItem(item)) {
-        subscriber.error('Invalid media item');
-        return;
-      }
-
-      const current = this._favorites.value;
-      // Solo agrego si el item no esta ya en la lista
-      if (!current.some(fav => fav.id === item.id && fav.tipoContenido === item.tipoContenido)) {
-        const updated = [...current, item];
-        this.updateFavorites(updated);
-      }
-      subscriber.next();
-      subscriber.complete();
-    });
+    return this.updateFavorites(item, 'add');
   }
 
-  // Metodo que alterna el estado de favorito: si ya esta, lo elimina; si no, lo agrega
+  removeFromFavorites(item: MediaItem): Observable<void> {
+    return this.updateFavorites(item, 'remove');
+  }
+
   toggleFavorite(item: MediaItem): Observable<void> {
+    return this.isFavorite(item).pipe(
+      take(1),
+      switchMap(isFavorite => {
+        return isFavorite 
+          ? this.removeFromFavorites(item)
+          : this.addToFavorites(item);
+      })
+    );
+  }
+
+  // Métodos privados
+  private setupUserChangeHandler(): void {
+    this.currentUserIdSubject.pipe(
+      switchMap(userId => {
+        if (userId !== null) {
+          return this.loadUserFavorites(userId);
+        } else {
+          this.favoritesSubject.next([]);
+          return of([]);
+        }
+      })
+    ).subscribe();
+  }
+
+  private loadUserFavorites(userId: number): Observable<MediaItem[]> {
+    this.loadingSubject.next(true);
+    
+    const localFavorites = this.loadFromLocalStorage(userId);
+    if (localFavorites.length > 0) {
+      this.favoritesSubject.next(localFavorites);
+    }
+
+    return this.http.get<FavoriteItem[]>(`${this.apiBaseUrl}/favorito/usuario/${userId}`).pipe(
+      map(favorites => favorites.map(this.convertApiToMediaItem)),
+      tap(apiFavorites => {
+        this.favoritesSubject.next(apiFavorites);
+        this.saveToLocalStorage(apiFavorites, userId);
+      }),
+      catchError(error => {
+        console.error('Error al cargar favoritos:', error);
+        this.favoritesSubject.next(localFavorites);
+        return of(localFavorites);
+      }),
+      finalize(() => this.loadingSubject.next(false))
+    );
+  }
+
+  private updateFavorites(item: MediaItem, action: 'add' | 'remove'): Observable<void> {
     return new Observable(subscriber => {
-      // Verifico que el item sea valido
-      if (!this.isValidMediaItem(item)) {
-        subscriber.error('Invalid media item');
+      const userId = this.currentUserIdSubject.value;
+      if (userId === null) {
+        subscriber.error(new Error('No hay usuario autenticado'));
         return;
       }
 
-      const current = this._favorites.value;
+      if (!this.isValidMediaItem(item)) {
+        subscriber.error(new Error('Media item inválido'));
+        return;
+      }
 
-      // Si el item ya esta en favoritos, lo elimino; si no, lo agrego
-      const updated = current.some(fav => fav.id === item.id && fav.tipoContenido === item.tipoContenido)
-        ? current.filter(f => !(f.id === item.id && f.tipoContenido === item.tipoContenido))
-        : [...current, item];
+      const currentFavorites = this.favoritesSubject.value;
+      let updatedFavorites: MediaItem[];
+      let apiCall: Observable<void>;
 
-      this.updateFavorites(updated);
-      subscriber.next();
-      subscriber.complete();
+      if (action === 'add') {
+        updatedFavorites = [...currentFavorites, item];
+        apiCall = this.http.post<void>(`${this.apiBaseUrl}/Favorito`, {
+          idUsuario: userId,
+          idContenido: item.id,
+          tipoContenido: item.tipoContenido
+        });
+      } else {
+        updatedFavorites = currentFavorites.filter(f => 
+          !(f.id === item.id && f.tipoContenido === item.tipoContenido)
+        );
+        apiCall = this.http.delete<void>(`${this.apiBaseUrl}/Favorito`, {
+          body: {
+            idUsuario: userId,
+            idContenido: item.id
+          }
+        });
+      }
+
+      // Optimistic update
+      this.favoritesSubject.next(updatedFavorites);
+      this.saveToLocalStorage(updatedFavorites, userId);
+
+      apiCall.pipe(
+        catchError(error => {
+          console.error(`Error al ${action === 'add' ? 'añadir' : 'eliminar'} favorito:`, error);
+          // Revertir cambios si falla la API
+          this.favoritesSubject.next(currentFavorites);
+          this.saveToLocalStorage(currentFavorites, userId);
+          return throwError(() => error);
+        })
+      ).subscribe({
+        next: () => {
+          subscriber.next();
+          subscriber.complete();
+        },
+        error: (err) => {
+          subscriber.error(err);
+        }
+      });
     });
   }
 
-  // Actualizo el subject y guardo en localStorage
-  private updateFavorites(newFavorites: MediaItem[]): void {
-    this._favorites.next(newFavorites);
-    this.saveToStorage(newFavorites);
+  private convertApiToMediaItem(favorite: FavoriteItem): MediaItem {
+    return {
+      id: favorite.idContenido,
+      nombre: favorite.nombreContenido,
+      tipoContenido: favorite.tipoContenido,
+      genero: favorite.genero,
+      duracion: favorite.duracion,
+      calificacion: favorite.calificacion,
+      imagen: favorite.imagen
+    };
   }
 
-  // Metodo para validar que el item tenga los datos minimos requeridos
   private isValidMediaItem(item: MediaItem): boolean {
     return !!item?.id && !!item?.tipoContenido;
   }
 
-  // Recupero los favoritos desde localStorage, si hay datos guardados
-  private loadFromStorage(): MediaItem[] {
+  private loadFromLocalStorage(userId: number): MediaItem[] {
     try {
-      const stored = localStorage.getItem(this.storageKey);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
+      if (isPlatformBrowser(this.platformId)) {
+        const userKey = `${this.storageKey}_${userId}`;
+        const stored = localStorage.getItem(userKey);
+        return stored ? JSON.parse(stored) : [];
+      }
+      return [];
+    } catch (e) {
+      console.error('Error leyendo localStorage', e);
       return [];
     }
   }
 
-  // Guardo los favoritos actuales en localStorage
-  private saveToStorage(favorites: MediaItem[]): void {
+  private saveToLocalStorage(favorites: MediaItem[], userId: number): void {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(favorites));
+      if (isPlatformBrowser(this.platformId)) {
+        const userKey = `${this.storageKey}_${userId}`;
+        localStorage.setItem(userKey, JSON.stringify(favorites));
+      }
     } catch (e) {
-      console.error('Failed to save favorites', e);
+      console.error('Error guardando en localStorage', e);
     }
   }
 }

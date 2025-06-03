@@ -9,9 +9,9 @@ namespace ContenidoAPI.Services
     // Interfaz que define los métodos que debe tener el servicio de favoritos
     public interface IFavoritoService
     {
-        Task<List<FavoritoDTO>> ObtenerFavoritos(int idUsuario);  // Obtener favoritos de un usuario
-        Task<bool> AgregarFavorito(int idUsuario, int idContenido); // Agregar un contenido a favoritos
-        Task<bool> EliminarFavorito(int idUsuario, int idContenido); // Eliminar un favorito
+        Task<FavoritoDTO> AgregarFavorito(FavoritoDTO favoritoDTO);
+        Task<bool> EliminarFavorito(int idUsuario, int idContenido);
+        Task<List<FavoritoConContenidoDTO>> ObtenerFavoritosConContenido(int idUsuario);
     }
 
     // Implementación del servicio que maneja los favoritos
@@ -27,59 +27,63 @@ namespace ContenidoAPI.Services
         }
 
         // Método para agregar un contenido a los favoritos de un usuario
-        public async Task<bool> AgregarFavorito(int idUsuario, int idContenido)
+        public async Task<FavoritoDTO> AgregarFavorito(FavoritoDTO favoritoDTO)
         {
-            // Verifica si el favorito ya existe para evitar duplicados
-            var existeFavorito = await _context.Favoritos
-                .AnyAsync(f => f.IdUsuario == idUsuario && f.IdContenido == idContenido);
+            if (await _context.Favoritos.AnyAsync(f => 
+                f.IdUsuario == favoritoDTO.IdUsuario && 
+                f.IdContenido == favoritoDTO.IdContenido))
+            {
+                throw new Exception("Este contenido ya está en favoritos");
+            }
 
-            if (existeFavorito) return false; // Si ya existe, no lo agrega y devuelve false
-
-            // Crea un nuevo objeto Favorito con los datos recibidos y fecha actual
             var favorito = new Favorito
             {
-                IdUsuario = idUsuario,
-                IdContenido = idContenido,
-                FechaAgregado = DateTime.Now
+                IdUsuario = favoritoDTO.IdUsuario,
+                IdContenido = favoritoDTO.IdContenido
             };
 
-            // Agrega el favorito a la base de datos
             _context.Favoritos.Add(favorito);
-            await _context.SaveChangesAsync(); // Guarda los cambios de forma asíncrona
+            await _context.SaveChangesAsync();
 
-            return true; // Devuelve true si se agregó correctamente
+            return favoritoDTO;
         }
 
         // Método para eliminar un favorito dado el usuario y el contenido
         public async Task<bool> EliminarFavorito(int idUsuario, int idContenido)
         {
-            // Busca el favorito que coincida con el usuario y contenido
             var favorito = await _context.Favoritos
-                .FirstOrDefaultAsync(f => f.IdUsuario == idUsuario && f.IdContenido == idContenido);
+                .FirstOrDefaultAsync(f => 
+                    f.IdUsuario == idUsuario && 
+                    f.IdContenido == idContenido);
 
-            if (favorito == null) return false; // Si no existe, devuelve false
+            if (favorito == null) return false;
 
-            // Elimina el favorito encontrado
             _context.Favoritos.Remove(favorito);
-            await _context.SaveChangesAsync(); // Guarda los cambios
-
-            return true; // Devuelve true si se eliminó correctamente
+            await _context.SaveChangesAsync();
+            return true;
         }
 
+
         // Método para obtener la lista de favoritos de un usuario
-        public async Task<List<FavoritoDTO>> ObtenerFavoritos(int idUsuario)
+        public async Task<List<FavoritoConContenidoDTO>> ObtenerFavoritosConContenido(int idUsuario)
         {
             return await _context.Favoritos
-                .Where(f => f.IdUsuario == idUsuario) // Filtra solo los favoritos del usuario
-                .Include(f => f.Contenido) // Incluye la información del contenido relacionado
-                .Select(f => new FavoritoDTO // Convierte la entidad Favorito a FavoritoDTO para enviar solo los datos necesarios
+                .Where(f => f.IdUsuario == idUsuario)
+                .Include(f => f.Contenido)
+                .ThenInclude(c => c.Tipo)
+                .Select(f => new FavoritoConContenidoDTO
                 {
+                    IdUsuario = f.IdUsuario,
                     IdContenido = f.IdContenido,
+                    FechaAgregado = f.FechaAgregado,
                     NombreContenido = f.Contenido.Nombre,
+                    Genero = f.Contenido.Genero,
+                    Duracion = f.Contenido.Duracion,
+                    Calificacion = f.Contenido.Calificacion,
                     Imagen = f.Contenido.Imagen,
-                    FechaAgregado = f.FechaAgregado
+                    TipoContenido = f.Contenido.Tipo.Nombre
                 })
-                .ToListAsync(); // Ejecuta la consulta y devuelve la lista
+                .ToListAsync();
         }
     }
 }

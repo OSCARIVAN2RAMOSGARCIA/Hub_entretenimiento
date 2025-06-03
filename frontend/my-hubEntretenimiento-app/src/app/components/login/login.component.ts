@@ -45,6 +45,12 @@ export class LoginComponent {
           } else {
             this.handleError('No se recibió token de autenticación');
           }
+           // Guarda el idUsuario si viene en la respuesta
+          if (response.idUsuario) {
+            localStorage.setItem('idUsuario', response.idUsuario.toString());
+          } else {
+            console.warn('La respuesta no incluyó idUsuario');
+          }
         },
         error: (error) => {
           this.isLoading = false;

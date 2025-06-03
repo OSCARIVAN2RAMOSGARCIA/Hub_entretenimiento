@@ -61,11 +61,27 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 7. Accede a Database/KomodoDB.sql
 8. Cargala en tu Gestor de Base de datos 
 
-## EndPoints
+## Dependencias o bibliotecas que hayan usado con nombre y versión
+* Para la API utilice Microsoft.EntityFrameworkCore version 8
+* Frontend provideHttpClient en angular version 
+## Descripción de como lo hiciste
+Utilice la guia impartida por nuestro challenger y tambien tome algunas funciones del curso de C# .net como el uso de la libreria entity framework asi como la creacion de modelos y DTOs para tener un manejo adecuado de los datos que se manejaran en la API asi como la creacion de controladores estableciendo cada endpoint su configuracion correspondiente, ademas agregue el cors ya que no permitia consumir la api por que necesitaba tenerlo activo y configurado por seguridad.
 
+Implementacion de JWT para crear tokens esto permite tener un token temporal para la sesion y tuve que crear una super secret key para que pudiera cifraser las password
+
+Una vez teniendo la API siimplemente sustitui el json que tenia de Mockup por la ruta de la API ya que ya tenia la libreria http asi como su configuracion 
+## Documentación de la API - Swagger
+![Captura de pantalla 5](/Resourses/swagger.png) 
+![Captura de pantalla 5](/Resourses/post.png) 
+
+## EndPoints
 - POST: */api/auth/registro*: Para el registro del usuario 
 - POST: */api/auth/login*: Para el Login 
 - GET: *api/contenido*:Para consumir el contenido
+
+## APARTADO DE POSIBLES MEJORAS FUTURAS
+* Me falta arreglar el endpoint de favoritos para agregar y consumir los favoritos para tambien almacenarlos en localstorage 
+* Me falta agregaR un boton para cerrar sesion
 
 ## Desarrollo  
 ## Problemas conocidos
@@ -74,7 +90,7 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 ## Retrospectiva
   
    1. ¿Qué hice bien?  
-   - La base de datos la realice de manera simple normalizada, estableci relaciones utilizando foreing key y primary key 
+   - La base de datos la realice de manera simple normalizada, estableci relaciones utilizando foreing key y primary key, agregue sus modelos y dtos ademas de crear un controlardor y servicio para cada una de las secciones, la creacion de token la implementacion de cors y asi como tambien la documentacion swagger 
 
    - Se implemento un login seguro encriptando la password y guardandola de una manera dificil de decifrar en la base de datos 
 
