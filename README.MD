@@ -50,6 +50,10 @@ Sigue estos pasos para ejecutar Komodo TV en tu máquina:
 3. Instala las dependencias con un npm install
 3. Y escribir el comando ng serve -o para ejecutarlo
 
+## Docker 
+![Captura de pantalla 3](/Resourses/docker.png) 
+Aqui se puede ver el container de la base de datos y el container de la aplicacion y sus respectivos dockerfile
+
 ## Ejecutar API en .NET 8 
 
 4. Accede a Backend/ContenidoApi 
